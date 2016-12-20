@@ -1,0 +1,10 @@
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\bin\Debug\TWC.exe.config
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\bin\Debug\TWC.exe
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\bin\Debug\TWC.pdb
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.csprojResolveAssemblyReference.cache
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.Mainmenu.resources
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.Properties.Resources.resources
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.csproj.GenerateResource.Cache
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.exe
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.pdb
+C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.game.resources
