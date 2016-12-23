@@ -252,3 +252,11 @@ paket-files/
 *.sln.iml
 # cards
 *.db
+*.suo
+*.pdb
+*.cache
+TWC/TWC/obj/Debug/TWC.csproj.FileListAbsolute.txt
+*.Cache
+TWC/TWC/obj/Debug/TWC.exe
+*.pdb
+TWC/TWC/obj/Debug/TWC.csproj.FileListAbsolute.txt
