@@ -251,4 +251,4 @@ paket-files/
 .idea/
 *.sln.iml
 # cards
-.db
+*.db
