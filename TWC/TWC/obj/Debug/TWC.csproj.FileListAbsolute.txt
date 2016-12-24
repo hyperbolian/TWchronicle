@@ -8,3 +8,13 @@ C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.csproj.GenerateResource
 C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.exe
 C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.pdb
 C:\Users\eric\Source\Repos\NewRepo\TWC\TWC\obj\Debug\TWC.game.resources
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\bin\Debug\TWC.exe.config
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.exe
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.pdb
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\bin\Debug\TWC.exe
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\bin\Debug\TWC.pdb
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.csprojResolveAssemblyReference.cache
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.Mainmenu.resources
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.game.resources
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.Properties.Resources.resources
+C:\Users\eric\Desktop\TWchronicle\TWC\TWC\obj\Debug\TWC.csproj.GenerateResource.Cache
