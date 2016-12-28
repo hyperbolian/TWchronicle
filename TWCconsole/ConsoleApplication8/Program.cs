@@ -31,6 +31,31 @@ namespace ConsoleApplication8
         //atk = 攻擊力 def = 防禦力 speed = 速度 power = 力量
         public bool fly, climb, swim;
         //fly = 是否能飛 climb = 是否能攀爬 swim = 是否能游泳
+        public void use(ref int[,] playerhands, ref Card[] deck, ref Player[] player)
+        {
+            Console.WriteLine("Which card do you want to use:");
+            int i;
+            for (i = 0; i < last(playerhands, 0) + 1; i++)
+            {
+                Console.WriteLine("{0} for {1}", i, deck[playerhands[0, i]].name);
+            }
+            int choose = int.Parse(Console.ReadLine());
+            switch (deck[playerhands[0, choose]].type)
+            {
+                case "atk":
+
+
+                    break;
+                case "def":
+
+
+                    break;
+                case "equi":
+
+
+                    break;
+            }
+        }
         
     }
       class Player
@@ -68,7 +93,40 @@ namespace ConsoleApplication8
         public string foodname;
         // 該種食物之名稱
     }
+    class Deck
+    {
+        public int[] deck;
+        public int[,] handdeck;
+        public Deck()
+        {
+            int[,] handdeck = new int[4, 30];
+        }
+        public Deck(int quant)
+        {
+            int[] deck = new int[quant];
+        }
+        public int getLast()
+        {
+            int i;
+            for (i = 0; i < this.deck.Length; i++)
+            {
+                if (this.deck[i] == 0) break;
+            }
+            return i - 1;
+        
+        }
+        public int getLast(int player)
+        {
+            int i;
+            for (i = 0; i < this.deck.Length; i++)
+            {
+                if (this.handdeck[player, i] == 255) break;
+            }
+            return i - 1;
+        }
 
+    }
+    
     class Program
     {
         static void Main()
@@ -126,7 +184,7 @@ namespace ConsoleApplication8
                 }
                 Card[] deck = new Card[card_max];
                 int card_print = 0;
-                int[] startingdeck = new int[card_max];
+                Deck starting = new Deck(card_max);
                 for (i = 0; i < card_max; i++)
                 {
                     deck[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, true, true, true, 0, 0);
@@ -148,43 +206,37 @@ namespace ConsoleApplication8
                         deck[card_print].swim = card[i].swim;
                         deck[card_print].speed = card[i].speed;
                         deck[card_print].power = card[i].power;
-                        startingdeck[card_print] = card_print;
+                        starting.deck[card_print] = card_print;
                         card_print++;
                     }
                 }
                 //建立桌面
-                shuffle(ref startingdeck);
+                shuffle(ref starting.deck);
                 shuffle(ref food);
-                int[,] playercards = new int[4, 30];
-                int[,] playerused = new int[4, 30];
-                int[,] playerhands = new int[4, 30];
+                Deck playercards = new Deck();
                 int deal = 0;//從startingdeck依序發牌給playerhads,shop,shopdeck
                 for (i = 0; i < 4; i++)
                 {
                     for (int j = 0; j < 5; j++)
                     {
-                        playercards[i, j] = startingdeck[deal];
-                        playerused[i, j] = 255;
-                        playerhands[i, j] = 255;
+                        playercards.handdeck[i,j] = starting.deck[deal];
                         deal++;
                     }
                     for (int j = 5; j < 30; j++)
                     {
-                        playercards[i, j] = 255;
-                        playerused[i, j] = 255;
-                        playerhands[i, j] = 255;
+                        playercards.handdeck[i,j] = 0;
                     }
                 }
-                int[] shop = new int[8];
-                for (i = 0; i < shop.Length; i++)
+                Deck shop = new Deck(8);
+                for (i = 0; i < shop.deck.Length; i++)
                 {
-                    shop[i] = startingdeck[deal];
+                    shop.deck[i] = starting.deck[deal];
                     deal++;
                 }
-                int[] shopdeck = new int[startingdeck.Length - 28];
-                for (i = 0; i < shopdeck.Length; i++)
+                Deck shopdeck = new Deck(starting.deck.Length - 28);
+                for (i = 0; i < shopdeck.deck.Length; i++)
                 {
-                    shopdeck[i] = startingdeck[deal];
+                    shopdeck.deck[i] = starting.deck[deal];
                     deal++;
                 }
                 //食物
