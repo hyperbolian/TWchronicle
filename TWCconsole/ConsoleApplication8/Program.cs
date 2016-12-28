@@ -35,14 +35,14 @@ namespace ConsoleApplication8
     }
       class Player
       {
-          public Player(int a, int b, int c, int d, int e, int f)
+          public Player(int a, int b, int c, int d, int e)
           {
               int DNA = a;
               int number = b;
               int hunger = c;
               int power = d;
               int speed = e;
-              int equi = f;
+              int[] equi = {0,0,0};
           }
           public int DNA, number, hunger, power, speed, equi;
           //DNA = 玩家角色持有的DNA數量 number = 玩家角色的族群總數 hunger = 玩家角色的飽食度
@@ -192,10 +192,9 @@ namespace ConsoleApplication8
                 Player[] player = new Player[4];
                 for (i = 0; i < player.Length; i++)
                 {
-                    player[i] = new Player(0,0,0,0,0,0);
+                    player[i] = new Player(0,0,0,0,0);
                     player[i].number = 3;
                     player[i].DNA = 4;
-                    player[i].equi = 0;
                     player[i].power = 3;
                     player[i].speed = 3;
                 }
