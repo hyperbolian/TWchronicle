@@ -8,7 +8,7 @@ using System.IO;
 
 namespace ConsoleApplication8
 {
-      class Card
+    class Card
     {
         public Card(string a, int b, int c, string d, string e, int f, int g, int h, bool i, bool j, bool k, int l, int m)
         {
@@ -32,9 +32,13 @@ namespace ConsoleApplication8
         public bool fly, climb, swim;
         //fly = 是否能飛 climb = 是否能攀爬 swim = 是否能游泳
  
-        
-    }
-      class Player
+        public void use(ref Player player,int deckNumber)
+        {
+            player.equi[player.getLastEquispace()] = deckNumber;
+        }
+   }
+    
+    class Player
       {
           public Player(int a, int b, int c, int d, int e)
           {
@@ -55,6 +59,29 @@ namespace ConsoleApplication8
           {
               this.number += damage;
           }
+          public void defenced(bool AI,int atk)
+          {
+              switch(AI)
+              {
+                  case true:
+
+                      if (this.hunger == 1)///不防禦
+                      { 
+                          Console.WriteLine("Your attack worked!");
+                          this.changeNumber(-atk);
+                      }
+                      else ///防禦
+                      {
+                          Console.WriteLine("Your attack has missed!");
+                          this.hunger -= 1;
+                          this.changeNumber(1-atk);
+                      }
+                      break;
+                  case false:
+
+                      break;
+              }
+          }
           public int getLast()
           {
               int i;
@@ -67,6 +94,15 @@ namespace ConsoleApplication8
           public int getLastspace()
           {
               return this.getLast() + 1;
+          }
+          public int getLastEquispace()
+          {
+              int i;
+              for (i = 0; i < this.equi.Length; i++)
+              {
+                  if (this.equi[i] == 0) break;
+              }
+              return i ;
           }
       }
     class Food
@@ -123,7 +159,7 @@ namespace ConsoleApplication8
                 Card[] card = new Card[allcardquant];
                 for (i = 0; i < allcardquant; ++i)
                 {
-                    card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, true, true, true, 0, 0);
+                    card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, false, false, false, 0, 0);
                     /*card[i] = new Card(file.ReadLine(), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()), file.ReadLine(),
                         file.ReadLine(), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()),
                         bool.Parse(file.ReadLine()), bool.Parse(file.ReadLine()), bool.Parse(file.ReadLine()), int.Parse(file.ReadLine())
@@ -238,6 +274,7 @@ namespace ConsoleApplication8
                 int currentPlayer = 0;
                 do
                 {
+                    bool basicAttacked = false;
                     ///print player hand
                     Console.WriteLine("Your hand:");
                     for (i = 0; i < player[currentPlayer].getLastspace(); i++)
@@ -245,10 +282,14 @@ namespace ConsoleApplication8
                         Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
                     }
                     int act_choose = 0;
-                    while (act_choose != 3)
+                    while (act_choose != 4)
                     {
-                        Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)\n3 for end turn");
+                        Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)");
+                        if(!basicAttacked)
+                        Console.WriteLine("3 for basic attack\n4 for end turn");
+                        else Console.WriteLine("3 for end turn");
                         act_choose = int.Parse(Console.ReadLine());
+                        if (basicAttacked && act_choose == 3) act_choose++;
                         switch (act_choose)
                         {
                             case 0:
@@ -266,6 +307,9 @@ namespace ConsoleApplication8
                                 break;
                             case 2:
                                 show(ref deck, ref shopdeck, ref shop, ref player,currentPlayer);
+                                break;
+                            case 3:
+                                basic_attack(ref player,currentPlayer);
                                 break;
                             default:
                                 break;
@@ -332,20 +376,17 @@ namespace ConsoleApplication8
                 Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].deck[i]].name);
             }
             int choose = int.Parse(Console.ReadLine());
-            switch (deck[player[currentPlayer].deck[choose]].type)
+            if (deck[player[currentPlayer].deck[choose]].type == "def")
             {
-                case "atk":
-
-
-                    break;
-                case "def":
-
-
-                    break;
-                case "equi":
-
-
-                    break;
+                Console.WriteLine("you can't use this card now");
+            }
+            else if (deck[player[currentPlayer].deck[choose]].type != "atk")
+            {
+                card_attack(ref player, currentPlayer, deck[player[currentPlayer].deck[choose]].atk, deck[player[currentPlayer].deck[choose]].cost);
+            }
+            else 
+            { 
+                deck[player[currentPlayer].deck[choose]].use(ref player[currentPlayer], player[currentPlayer].deck[choose]); 
             }
         }
 
@@ -425,6 +466,43 @@ namespace ConsoleApplication8
                     Console.WriteLine("Speed:{0}", player[i].speed);
                 }
             }
+        }
+
+        static void basic_attack(ref Player[] player,int currentPlayer)
+          {
+              Console.WriteLine("Which player would you want to attack");
+              int j = 0;
+              for (int i = 0; i < 4; i++)
+              {
+                  if (currentPlayer != i)
+                  {
+                      Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
+                      j++;
+                  }
+              }
+              int choise = int.Parse(Console.ReadLine());
+              if (currentPlayer <= choise) choise += 1;
+              player[currentPlayer].hunger -= 1;
+              player[choise].defenced(currentPlayer != 0,1);///進行防禦並判定是否叫出AI 
+
+          }
+        static void card_attack(ref Player[] player, int currentPlayer,int atk,int cost)
+        {
+            Console.WriteLine("Which player would you want to attack");
+            int j = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentPlayer != i)
+                {
+                    Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
+                    j++;
+                }
+            }
+            int choise = int.Parse(Console.ReadLine());
+            if (currentPlayer <= choise) choise += 1;
+            player[currentPlayer].hunger -= cost;
+            player[choise].defenced(currentPlayer != 0,atk);///進行防禦並判定是否叫出AI 
+
         }
     }
 }
