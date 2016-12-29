@@ -31,31 +31,7 @@ namespace ConsoleApplication8
         //atk = 攻擊力 def = 防禦力 speed = 速度 power = 力量
         public bool fly, climb, swim;
         //fly = 是否能飛 climb = 是否能攀爬 swim = 是否能游泳
-        public void use(ref int[,] playerhands, ref Card[] deck, ref Player[] player)
-        {
-            Console.WriteLine("Which card do you want to use:");
-            int i;
-            for (i = 0; i < last(playerhands, 0) + 1; i++)
-            {
-                Console.WriteLine("{0} for {1}", i, deck[playerhands[0, i]].name);
-            }
-            int choose = int.Parse(Console.ReadLine());
-            switch (deck[playerhands[0, choose]].type)
-            {
-                case "atk":
-
-
-                    break;
-                case "def":
-
-
-                    break;
-                case "equi":
-
-
-                    break;
-            }
-        }
+ 
         
     }
       class Player
@@ -68,11 +44,30 @@ namespace ConsoleApplication8
               int power = d;
               int speed = e;
               int[] equi = {0,0,0};
+              this.deck = new int[30];
           }
-          public int DNA, number, hunger, power, speed, equi;
+          public int DNA, number, hunger, power, speed;
+          public int[] equi, deck;
           //DNA = 玩家角色持有的DNA數量 number = 玩家角色的族群總數 hunger = 玩家角色的飽食度
           // info = 玩家資訊 equi = 玩家目前已裝備之裝備 speed = 玩家的速度值 power = 玩家的力量值
           public string info;
+          public void changeNumber(int damage)
+          {
+              this.number += damage;
+          }
+          public int getLast()
+          {
+              int i;
+              for (i = 0; i < this.deck.Length; i++)
+              {
+                  if (this.deck[i] == 0) break;
+              }
+              return i - 1;
+          }
+          public int getLastspace()
+          {
+              return this.getLast() + 1;
+          }
       }
     class Food
     {
@@ -96,14 +91,9 @@ namespace ConsoleApplication8
     class Deck
     {
         public int[] deck;
-        public int[,] handdeck;
-        public Deck()
-        {
-            int[,] handdeck = new int[4, 30];
-        }
         public Deck(int quant)
         {
-            int[] deck = new int[quant];
+            this.deck = new int[quant];
         }
         public int getLast()
         {
@@ -115,14 +105,9 @@ namespace ConsoleApplication8
             return i - 1;
         
         }
-        public int getLast(int player)
+        public int getLastspace()
         {
-            int i;
-            for (i = 0; i < this.deck.Length; i++)
-            {
-                if (this.handdeck[player, i] == 255) break;
-            }
-            return i - 1;
+            return this.getLast() + 1;
         }
 
     }
@@ -176,16 +161,17 @@ namespace ConsoleApplication8
                     food[i].needpower = int.Parse(file2.ReadLine());
                 
                 }
+                
 
                 int card_max = 0;
                 for (i = 0; i < allcardquant; i++)
                 {
                     card_max += card[i].quant;
                 }
-                Card[] deck = new Card[card_max];
-                int card_print = 0;
-                Deck starting = new Deck(card_max);
-                for (i = 0; i < card_max; i++)
+                Card[] deck = new Card[card_max+1];
+                int card_print = 1;
+                Deck starting = new Deck(card_max+1);
+                for (i = 0; i <= card_max; i++)
                 {
                     deck[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, true, true, true, 0, 0);
                 }
@@ -210,37 +196,7 @@ namespace ConsoleApplication8
                         card_print++;
                     }
                 }
-                //建立桌面
-                shuffle(ref starting.deck);
-                shuffle(ref food);
-                Deck playercards = new Deck();
-                int deal = 0;//從startingdeck依序發牌給playerhads,shop,shopdeck
-                for (i = 0; i < 4; i++)
-                {
-                    for (int j = 0; j < 5; j++)
-                    {
-                        playercards.handdeck[i,j] = starting.deck[deal];
-                        deal++;
-                    }
-                    for (int j = 5; j < 30; j++)
-                    {
-                        playercards.handdeck[i,j] = 0;
-                    }
-                }
-                Deck shop = new Deck(8);
-                for (i = 0; i < shop.deck.Length; i++)
-                {
-                    shop.deck[i] = starting.deck[deal];
-                    deal++;
-                }
-                Deck shopdeck = new Deck(starting.deck.Length - 28);
-                for (i = 0; i < shopdeck.deck.Length; i++)
-                {
-                    shopdeck.deck[i] = starting.deck[deal];
-                    deal++;
-                }
-                //食物
-                //角色初始化
+               //角色初始化
                 Player[] player = new Player[4];
                 for (i = 0; i < player.Length; i++)
                 {
@@ -250,48 +206,43 @@ namespace ConsoleApplication8
                     player[i].power = 3;
                     player[i].speed = 3;
                 }
+                //建立桌面
+                shuffle(ref starting.deck);
+                placeZero(ref starting.deck);
+                shuffle(ref food);
+                int deal = 1;//從startingdeck依序發牌給playerhads,shop,shopdeck
+                for (i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < 5; j++)
+                    {
+                        player[i].deck[j] = starting.deck[deal];
+                        deal++;
+                    }
+                }
+                Deck shop = new Deck(8);
+                for (i = 0; i < shop.deck.Length; i++)
+                {
+                    shop.deck[i] = starting.deck[deal];
+                    deal++;
+                }
+                Deck shopdeck = new Deck(starting.deck.Length - 29);
+                for (i = 0; i < shopdeck.deck.Length; i++)
+                {
+                    shopdeck.deck[i] = starting.deck[deal];
+                    deal++;
+                }
+                //食物
 
 
-                
-                Random playerrand = new Random(); ///玩家洗牌用
+
+                int currentPlayer = 0;
                 do
                 {
-                    Console.WriteLine("It's your turn. Draw!");
-                    ///Draw!
-                    for (i = 0; i < 2; i++)
-                    {
-                        if (last(playercards, 0) != -1 && last(playerhands, 0) != 6)
-                        {
-                            playerhands[0, last(playerhands, 0) + 1] = playercards[0, last(playercards, 0)];
-                            playercards[0, last(playercards, 0)] = 255;
-                        }
-                        else if (last(playercards, 0) == -1 && last(playerhands, 0) != 6 && last(playerused, 0) != -1)
-                        {
-                            Console.WriteLine("No cards in deck.Rebuilding your deck.");
-                            while (last(playerused, 0) != -1)
-                            {
-                                int recycle = playerrand.Next() % (last(playerused, 0) + 1);
-                                playercards[0, last(playercards, 0)+1] = playerused[0, recycle];
-                                if (recycle != last(playerused, 0)) playerused[0, recycle] = playerused[0, last(playerused, 0)];
-                                playerused[0, last(playerused, 0)] = 255;
-                                ///隨機將棄牌堆剩下的任一張牌放到玩家牌堆頂 並將棄牌的最後一張補進空格 直到棄牌區沒牌
-                            }
-                            playerhands[0, last(playerhands, 0)] = playercards[0, last(playercards, 0)];
-                            playercards[0, last(playercards, 0)] = 255;
-                        }
-                        else if (last(playerused, 0) != -1) Console.WriteLine("No card to draw");
-                        else
-                        {
-                            Console.WriteLine("Your hand is full. Can't draw more cards!");
-                            break;
-                        }
-                    }
-                    ///Draw end!
                     ///print player hand
                     Console.WriteLine("Your hand:");
-                    for (i = 0; i < last(playerhands, 0)+1; i++)
+                    for (i = 0; i < player[currentPlayer].getLastspace(); i++)
                     {
-                        Console.WriteLine("{0}", deck[playerhands[0, i]].name);
+                        Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
                     }
                     int act_choose = 0;
                     while (act_choose != 3)
@@ -301,20 +252,20 @@ namespace ConsoleApplication8
                         switch (act_choose)
                         {
                             case 0:
-                                use(ref playerhands, ref deck, ref player);
+                                use(ref deck,ref player,currentPlayer);
                                 break;
                             case 1:
-                                if (last(shop) == -1)///shop沒牌啦
+                                if (shop.getLast() == -1)///shop沒牌啦
                                 {
                                     Console.WriteLine("There's nothing in the shop");
                                 }
                                 else
                                 {
-                                    buy(ref playerused, ref deck, ref shopdeck, ref shop, ref player);
+                                    buy(ref deck, ref shopdeck, ref shop, ref player,currentPlayer);
                                 }
                                 break;
                             case 2:
-                                show(ref playerhands, ref deck, ref shopdeck, ref shop, ref player);
+                                show(ref deck, ref shopdeck, ref shop, ref player,currentPlayer);
                                 break;
                             default:
                                 break;
@@ -343,6 +294,19 @@ namespace ConsoleApplication8
             }
             Array.Sort(temp, cards);
         }
+
+        static void placeZero(ref int[] starting )
+        {
+            for (int i = 0; i < starting.Length; i++)
+            {
+                if (starting[i] == 0)
+                {
+                    starting[i] = starting[0];
+                    starting[0] = 0;
+                }
+            }
+        }
+
         static void shuffle(ref Food[] cards)
         {
             Random rand = new Random();
@@ -359,16 +323,16 @@ namespace ConsoleApplication8
 
 
 
-        static void use(ref int[,] playerhands, ref Card[] deck, ref Player[] player)
+        static void use(ref Card[] deck, ref Player[] player, int currentPlayer)
         {
             Console.WriteLine("Which card do you want to use:");
             int i;
-            for (i = 0; i < last(playerhands, 0)+1; i++)
+            for (i = 0; i < player[currentPlayer].getLastspace(); i++)
             {
-                Console.WriteLine("{0} for {1}", i, deck[playerhands[0, i]].name);
+                Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].deck[i]].name);
             }
             int choose = int.Parse(Console.ReadLine());
-            switch (deck[playerhands[0, choose]].type)
+            switch (deck[player[currentPlayer].deck[choose]].type)
             {
                 case "atk":
 
@@ -386,37 +350,37 @@ namespace ConsoleApplication8
         }
 
 
-        static void buy(ref int[,] playerused, ref Card[] deck, ref int[] shopdeck, ref int[] shop, ref Player[] player)
+        static void buy(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,int currentPlayer)
         {
             int i;
             Console.WriteLine("What would you like to buy:");
-            for (i = 0; i < last(shop)+1; i++)
+            for (i = 0; i < shop.getLastspace(); i++)
             {
-                Console.WriteLine("{0} for {1}", i, deck[shop[i]].name);
+                Console.WriteLine("{0} for {1}", i, deck[shop.deck[i]].name);
             }
             int choose = int.Parse(Console.ReadLine());
-            if (deck[shop[choose]].cost <= player[0].DNA)
+            if (deck[shop.deck[choose]].cost <= player[0].DNA)
             {
-                Console.WriteLine("It costs you {0} DNA!", deck[shop[choose]].cost);
-                player[0].DNA -= deck[shop[choose]].cost;
+                Console.WriteLine("It costs you {0} DNA!", deck[shop.deck[choose]].cost);
+                player[0].DNA -= deck[shop.deck[choose]].cost;
 
 
-                playerused[0, last(playerused, 0)+1] = shop[choose];
+               player[currentPlayer].deck[player[currentPlayer].getLastspace()] = shop.deck[choose];
    
-                if (last(shopdeck) != -1) ///從shopdeck補充牌進shop
+                if (shopdeck.getLast() != -1) ///從shopdeck補充牌進shop
                 {
-                    shop[choose] = 255;
-                    shop[choose] = shopdeck[last(shopdeck)];
-                    shopdeck[last(shopdeck)] = 255;
+                    shop.deck[choose] = 0;
+                    shop.deck[choose] = shopdeck.deck[shopdeck.getLast()];
+                    shopdeck.deck[shopdeck.getLast()] = 0;
                 }
-                else if (last(shop) != choose && choose != last(shopdeck))///shopdeck用完了 且買的牌不是最後面一張
+                else if (shop.getLast() != choose && choose != shopdeck.getLast())///shopdeck用完了 且買的牌不是最後面一張
                 {
-                    shop[choose] = shop[last(shop)];
-                    shop[last(shop)] = 255;
+                    shop.deck[choose] = shop.deck[shop.getLast()];
+                    shop.deck[shop.getLast()] = 0;
                 }
                 else
                 {
-                    shop[choose] = 255;
+                    shop.deck[choose] = 0;
                 }
             }
             else
@@ -426,7 +390,7 @@ namespace ConsoleApplication8
         }
 
 
-        static void show(ref int[,] playerhands, ref Card[] deck, ref int[] shopdeck, ref int[] shop, ref Player[] player)
+        static void show(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,int currentPlayer)
         {
             Console.WriteLine("What would you like to see?");
             Console.WriteLine("0 for your own hands\n1 for shop item list\n2 for player status");
@@ -435,17 +399,17 @@ namespace ConsoleApplication8
             if (choose == 0)
             {
                 Console.WriteLine("Your hand:");
-                for (i = 0; i < last(playerhands, 0)+1; i++)
+                for (i = 0; i < player[currentPlayer].getLastspace(); i++)
                 {
-                    Console.WriteLine("{0}", deck[playerhands[0, i]].name);
+                    Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
                 }
             }
             else if (choose == 1)
             {
                 Console.WriteLine("Items in shop:");
-                for (i = 0; i < last(shop)+1; i++)
+                for (i = 0; i < shop.getLast()+1; i++)
                 {
-                    Console.WriteLine("{0}", deck[shop[i]].name);
+                    Console.WriteLine("{0}", deck[shop.deck[i]].name);
                 }
             }
             else
@@ -462,26 +426,5 @@ namespace ConsoleApplication8
                 }
             }
         }
-
-
-        static int last(int[] obj)
-        {
-            int i;
-            for (i = 0; i < obj.Length; i++)
-            {
-                if (obj[i] == 255) break;
-            }
-            return i - 1;
-        }
-        static int last(int[,] obj, int pl)
-        {
-            int i;
-            for (i = 0; i < obj.Length; i++)
-            {
-                if (obj[pl, i] == 255) break;
-            }
-            return i - 1;
-        }
-
     }
 }
