@@ -43,11 +43,16 @@ namespace ConsoleApplication8
               int hunger = c;
               int power = d;
               int speed = e;
+              int wanttoeat = 0;
               int[] equi = {0,0,0};
               this.deck = new int[30];
+              bool canclimb = false;
+              bool canfly = false;
+              bool canswim = false;
           }
-          public int DNA, number, hunger, power, speed;
+          public int DNA, number, hunger, power, speed, wanttoeat;
           public int[] equi, deck;
+          public bool canclimb, canfly, canswim;
           //DNA = 玩家角色持有的DNA數量 number = 玩家角色的族群總數 hunger = 玩家角色的飽食度
           // info = 玩家資訊 equi = 玩家目前已裝備之裝備 speed = 玩家的速度值 power = 玩家的力量值
           public string info;
@@ -232,8 +237,7 @@ namespace ConsoleApplication8
                     deal++;
                 }
                 //食物
-
-
+                int[] currentfood = { 0, 1, 2 };
 
                 int currentPlayer = 0;
                 do
@@ -346,6 +350,36 @@ namespace ConsoleApplication8
 
 
                     break;
+            }
+        }
+
+        static void eat(ref int[] currentfood, Food[] food, ref Player[] player, ref Card[] card)
+        {
+            int i, j, k;
+            int[] take = new int[4];
+            int[] eatscore = new int[4];
+            int[] tempplayer = new int[4];
+            bool[] climballow = new bool[3];
+            bool[] flyallow = new bool[3];
+            bool[] swimallow = new bool[3];
+            for (i = 0; i < player.Length; i++)
+            {
+                player[i].canclimb = card[player[i].equi[0]].climb | card[player[i].equi[1]].climb | card[player[i].equi[2]].climb;
+                player[i].canfly = card[player[i].equi[0]].fly | card[player[i].equi[1]].fly | card[player[i].equi[2]].fly;
+                player[i].canswim = card[player[i].equi[0]].swim | card[player[i].equi[1]].swim | card[player[i].equi[2]].swim;
+            }
+            for (i = 0; i < currentfood.Length; i++)
+            {
+                for (j = 0; j < tempplayer.Length; j++)
+                {
+                    tempplayer[j] = j;
+                }
+                for (j = 0; j < eatscore.Length; j++)
+                {
+                    eatscore[j] = (player[j].wanttoeat != i && (food[currentfood[i]].needclimb && !(player[j].canclimb)) && (food[currentfood[i]].needfly && !(player[j].canfly)) && (food[currentfood[i]].needswim && !(player[j].canswim)) ? 0 : 1) * (player[j].speed * 30 + player[j].power);
+                }
+                Array.Sort(eatscore, tempplayer);
+                player[tempplayer[3]].hunger += 3 - i;
             }
         }
 
