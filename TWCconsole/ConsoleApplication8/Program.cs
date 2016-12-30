@@ -49,7 +49,7 @@ namespace ConsoleApplication8
               int power = d;
               int speed = e;
               int wanttoeat = 0;
-              int[] equi = {0,0,0};
+              this.equi = new int[3]{0,0,0};
               this.deck = new int[30];
               bool canclimb = false;
               bool canfly = false;
@@ -388,7 +388,7 @@ namespace ConsoleApplication8
                 ///防禦
                 Console.WriteLine("you can't use this card now");
             }
-            else if (deck[player[currentPlayer].deck[choose]].type != "atk")
+            else if (deck[player[currentPlayer].deck[choose]].type == "atk")
             {
                 ///攻擊card_attack
                 card_attack(ref player, currentPlayer, deck[player[currentPlayer].deck[choose]].atk, deck[player[currentPlayer].deck[choose]].cost);
@@ -401,7 +401,7 @@ namespace ConsoleApplication8
             }
 
              player[currentPlayer].deck[choose] = player[currentPlayer].deck[player[currentPlayer].getLast()];
-             player[currentPlayer].deck[player[currentPlayer].getLastspace()] = 0; ///將最後一張手牌放回空格
+             player[currentPlayer].deck[player[currentPlayer].getLast()] = 0; ///將最後一張手牌放回空格
         }
 
         static void eat(ref int[] currentfood, Food[] food, ref Player[] player, ref Card[] card)
@@ -460,7 +460,7 @@ namespace ConsoleApplication8
                 }
                 else if (shopUsed.getLast() != -1)///shopdeck用完了 棄牌庫有牌
                 {
-                    recycle(ref shop,ref shopUsed);///重建shop.deck
+                    recycle(ref shopdeck,ref shopUsed);///重建shop.deck
                     shop.deck[choose] = 0;
                     shop.deck[choose] = shopdeck.deck[shopdeck.getLast()];
                     shopdeck.deck[shopdeck.getLast()] = 0;
@@ -534,7 +534,7 @@ namespace ConsoleApplication8
               int choise = int.Parse(Console.ReadLine());
               if (currentPlayer <= choise) choise += 1;
               player[currentPlayer].hunger -= 1;
-              player[choise].defense(currentPlayer != 0,1);///進行防禦並判定是否叫出AI 
+              player[choise].defense(choise != 0,1);///進行防禦並判定是否叫出AI 
 
           }
         static void card_attack(ref Player[] player, int currentPlayer,int atk,int cost)
@@ -552,10 +552,10 @@ namespace ConsoleApplication8
             int choise = int.Parse(Console.ReadLine());
             if (currentPlayer <= choise) choise += 1;
             player[currentPlayer].hunger -= cost;
-            player[choise].defense(currentPlayer != 0,atk);///進行防禦並判定是否叫出AI 
+            player[choise].defense(choise != 0,atk);///進行防禦並判定是否叫出AI 
 
         }
-        static void recycle(ref Deck shop,ref Deck shopUsed)
+        static void recycle(ref Deck shopdeck,ref Deck shopUsed)
         {
             Random rand = new Random();
             int[] temp = new int[shopUsed.deck.Length];
@@ -568,7 +568,7 @@ namespace ConsoleApplication8
             Array.Reverse(shopUsed.deck);
             for (int i = 0; i < shopUsed.deck.Length; i++)
             {
-                shop.deck[i] = shopUsed.deck[i];
+                shopdeck.deck[i] = shopUsed.deck[i];
                 shopUsed.deck[i] = 0;
             }
         }
