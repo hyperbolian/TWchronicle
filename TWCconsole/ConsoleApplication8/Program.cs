@@ -8,7 +8,7 @@ using System.IO;
 
 namespace ConsoleApplication8
 {
-      class Card
+    class Card
     {
         public Card(string a, int b, int c, string d, string e, int f, int g, int h, bool i, bool j, bool k, int l, int m)
         {
@@ -32,9 +32,14 @@ namespace ConsoleApplication8
         public bool fly, climb, swim;
         //fly = 是否能飛 climb = 是否能攀爬 swim = 是否能游泳
  
-        
-    }
-      class Player
+        public void use(ref Player player,int deckNumber)
+        {
+            player.equi[player.getLastEquispace()] = deckNumber;
+            player.hunger -= this.cost;
+        }
+   }
+    
+    class Player
       {
           public Player(int a, int b, int c, int d, int e)
           {
@@ -44,7 +49,7 @@ namespace ConsoleApplication8
               int power = d;
               int speed = e;
               int wanttoeat = 0;
-              int[] equi = {0,0,0};
+              this.equi = new int[3]{0,0,0};
               this.deck = new int[30];
               bool canclimb = false;
               bool canfly = false;
@@ -60,6 +65,29 @@ namespace ConsoleApplication8
           {
               this.number += damage;
           }
+          public void defense(bool AI,int atk)
+          {
+              switch(AI)
+              {
+                  case true:
+
+                      if (this.hunger == 1)///不防禦
+                      { 
+                          Console.WriteLine("Your attack worked!");
+                          this.changeNumber(-atk);
+                      }
+                      else ///防禦
+                      {
+                          Console.WriteLine("Your attack has missed!");
+                          this.hunger -= 1;
+                          this.changeNumber(1-atk);
+                      }
+                      break;
+                  case false:
+
+                      break;
+              }
+          }
           public int getLast()
           {
               int i;
@@ -72,6 +100,15 @@ namespace ConsoleApplication8
           public int getLastspace()
           {
               return this.getLast() + 1;
+          }
+          public int getLastEquispace()
+          {
+              int i;
+              for (i = 0; i < this.equi.Length; i++)
+              {
+                  if (this.equi[i] == 0) break;
+              }
+              return i ;
           }
       }
     class Food
@@ -128,7 +165,7 @@ namespace ConsoleApplication8
                 Card[] card = new Card[allcardquant];
                 for (i = 0; i < allcardquant; ++i)
                 {
-                    card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, true, true, true, 0, 0);
+                    card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, false, false, false, 0, 0);
                     /*card[i] = new Card(file.ReadLine(), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()), file.ReadLine(),
                         file.ReadLine(), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()),
                         bool.Parse(file.ReadLine()), bool.Parse(file.ReadLine()), bool.Parse(file.ReadLine()), int.Parse(file.ReadLine())
@@ -230,18 +267,20 @@ namespace ConsoleApplication8
                     shop.deck[i] = starting.deck[deal];
                     deal++;
                 }
-                Deck shopdeck = new Deck(starting.deck.Length - 29);
-                for (i = 0; i < shopdeck.deck.Length; i++)
+                Deck shopdeck = new Deck(starting.deck.Length);
+                for (i = 0; i < shopdeck.deck.Length-29; i++)
                 {
                     shopdeck.deck[i] = starting.deck[deal];
                     deal++;
                 }
+                Deck shopUsed = new Deck(starting.deck.Length);
                 //食物
                 int[] currentfood = { 0, 1, 2 };
 
                 int currentPlayer = 0;
                 do
                 {
+                    bool basicAttacked = false;
                     ///print player hand
                     Console.WriteLine("Your hand:");
                     for (i = 0; i < player[currentPlayer].getLastspace(); i++)
@@ -249,14 +288,18 @@ namespace ConsoleApplication8
                         Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
                     }
                     int act_choose = 0;
-                    while (act_choose != 3)
+                    while (act_choose != 4)
                     {
-                        Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)\n3 for end turn");
+                        Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)");
+                        if(!basicAttacked)
+                        Console.WriteLine("3 for basic attack\n4 for end turn");
+                        else Console.WriteLine("3 for end turn");
                         act_choose = int.Parse(Console.ReadLine());
+                        if (basicAttacked && act_choose == 3) act_choose++;
                         switch (act_choose)
                         {
                             case 0:
-                                use(ref deck,ref player,currentPlayer);
+                                use(ref deck,ref player,ref shopUsed,currentPlayer);
                                 break;
                             case 1:
                                 if (shop.getLast() == -1)///shop沒牌啦
@@ -265,11 +308,15 @@ namespace ConsoleApplication8
                                 }
                                 else
                                 {
-                                    buy(ref deck, ref shopdeck, ref shop, ref player,currentPlayer);
+                                    buy(ref deck, ref shopdeck, ref shop,ref player,ref shopUsed ,currentPlayer);
                                 }
                                 break;
                             case 2:
                                 show(ref deck, ref shopdeck, ref shop, ref player,currentPlayer);
+                                break;
+                            case 3:
+                                basic_attack(ref player,currentPlayer);
+                                basicAttacked = true;
                                 break;
                             default:
                                 break;
@@ -327,7 +374,7 @@ namespace ConsoleApplication8
 
 
 
-        static void use(ref Card[] deck, ref Player[] player, int currentPlayer)
+        static void use(ref Card[] deck, ref Player[] player,ref Deck shopUsed, int currentPlayer)
         {
             Console.WriteLine("Which card do you want to use:");
             int i;
@@ -336,21 +383,25 @@ namespace ConsoleApplication8
                 Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].deck[i]].name);
             }
             int choose = int.Parse(Console.ReadLine());
-            switch (deck[player[currentPlayer].deck[choose]].type)
+            if (deck[player[currentPlayer].deck[choose]].type == "def")
             {
-                case "atk":
-
-
-                    break;
-                case "def":
-
-
-                    break;
-                case "equi":
-
-
-                    break;
+                ///防禦
+                Console.WriteLine("you can't use this card now");
             }
+            else if (deck[player[currentPlayer].deck[choose]].type == "atk")
+            {
+                ///攻擊card_attack
+                card_attack(ref player, currentPlayer, deck[player[currentPlayer].deck[choose]].atk, deck[player[currentPlayer].deck[choose]].cost);
+                shopUsed.deck[shopUsed.getLastspace()] = player[currentPlayer].deck[choose]; ///棄牌
+            }
+            else 
+            { 
+                ///裝備
+                deck[player[currentPlayer].deck[choose]].use(ref player[currentPlayer], player[currentPlayer].deck[choose]); 
+            }
+
+             player[currentPlayer].deck[choose] = player[currentPlayer].deck[player[currentPlayer].getLast()];
+             player[currentPlayer].deck[player[currentPlayer].getLast()] = 0; ///將最後一張手牌放回空格
         }
 
         static void eat(ref int[] currentfood, Food[] food, ref Player[] player, ref Card[] card)
@@ -384,7 +435,7 @@ namespace ConsoleApplication8
         }
 
 
-        static void buy(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,int currentPlayer)
+        static void buy(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,ref Deck shopUsed,int currentPlayer)
         {
             int i;
             Console.WriteLine("What would you like to buy:");
@@ -401,20 +452,27 @@ namespace ConsoleApplication8
 
                player[currentPlayer].deck[player[currentPlayer].getLastspace()] = shop.deck[choose];
    
-                if (shopdeck.getLast() != -1) ///從shopdeck補充牌進shop
+                if (shopdeck.getLast() != -1) ///商店deck還有牌 從shopdeck補充牌進shop
                 {
                     shop.deck[choose] = 0;
                     shop.deck[choose] = shopdeck.deck[shopdeck.getLast()];
                     shopdeck.deck[shopdeck.getLast()] = 0;
                 }
-                else if (shop.getLast() != choose && choose != shopdeck.getLast())///shopdeck用完了 且買的牌不是最後面一張
+                else if (shopUsed.getLast() != -1)///shopdeck用完了 棄牌庫有牌
+                {
+                    recycle(ref shopdeck,ref shopUsed);///重建shop.deck
+                    shop.deck[choose] = 0;
+                    shop.deck[choose] = shopdeck.deck[shopdeck.getLast()];
+                    shopdeck.deck[shopdeck.getLast()] = 0;
+                }
+                else if (shop.getLast() != choose && choose != shopdeck.getLast())///棄牌庫沒牌
                 {
                     shop.deck[choose] = shop.deck[shop.getLast()];
                     shop.deck[shop.getLast()] = 0;
                 }
-                else
+                else ///剩下一張
                 {
-                    shop.deck[choose] = 0;
+                    shop.deck[shop.getLast()] = 0;
                 }
             }
             else
@@ -458,6 +516,60 @@ namespace ConsoleApplication8
                     Console.WriteLine("Power:{0}", player[i].power);
                     Console.WriteLine("Speed:{0}", player[i].speed);
                 }
+            }
+        }
+
+        static void basic_attack(ref Player[] player,int currentPlayer)
+          {
+              Console.WriteLine("Which player would you want to attack");
+              int j = 0;
+              for (int i = 0; i < 4; i++)
+              {
+                  if (currentPlayer != i)
+                  {
+                      Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
+                      j++;
+                  }
+              }
+              int choise = int.Parse(Console.ReadLine());
+              if (currentPlayer <= choise) choise += 1;
+              player[currentPlayer].hunger -= 1;
+              player[choise].defense(choise != 0,1);///進行防禦並判定是否叫出AI 
+
+          }
+        static void card_attack(ref Player[] player, int currentPlayer,int atk,int cost)
+        {
+            Console.WriteLine("Which player would you want to attack");
+            int j = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentPlayer != i)
+                {
+                    Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
+                    j++;
+                }
+            }
+            int choise = int.Parse(Console.ReadLine());
+            if (currentPlayer <= choise) choise += 1;
+            player[currentPlayer].hunger -= cost;
+            player[choise].defense(choise != 0,atk);///進行防禦並判定是否叫出AI 
+
+        }
+        static void recycle(ref Deck shopdeck,ref Deck shopUsed)
+        {
+            Random rand = new Random();
+            int[] temp = new int[shopUsed.deck.Length];
+            for (int i = 0; i < shopUsed.deck.Length; i++)
+            {
+                if (i <= shopUsed.getLast()) temp[i] = rand.Next();
+                else temp[i] = -1;
+            }
+            Array.Sort(temp, shopUsed.deck);
+            Array.Reverse(shopUsed.deck);
+            for (int i = 0; i < shopUsed.deck.Length; i++)
+            {
+                shopdeck.deck[i] = shopUsed.deck[i];
+                shopUsed.deck[i] = 0;
             }
         }
     }
