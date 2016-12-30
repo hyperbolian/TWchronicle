@@ -364,9 +364,9 @@ namespace ConsoleApplication8
             bool[] swimallow = new bool[3];
             for (i = 0; i < player.Length; i++)
             {
-                player[i].canclimb = card[player[i].equi[0]].climb | card[player[i].equi[1]].climb | card[player[i].equi[2]].climb;
-                player[i].canfly = card[player[i].equi[0]].fly | card[player[i].equi[1]].fly | card[player[i].equi[2]].fly;
-                player[i].canswim = card[player[i].equi[0]].swim | card[player[i].equi[1]].swim | card[player[i].equi[2]].swim;
+                player[i].canclimb = card[player[i].equi[0]].climb || card[player[i].equi[1]].climb || card[player[i].equi[2]].climb;
+                player[i].canfly = card[player[i].equi[0]].fly || card[player[i].equi[1]].fly || card[player[i].equi[2]].fly;
+                player[i].canswim = card[player[i].equi[0]].swim || card[player[i].equi[1]].swim || card[player[i].equi[2]].swim;
             }
             for (i = 0; i < currentfood.Length; i++)
             {
@@ -376,7 +376,7 @@ namespace ConsoleApplication8
                 }
                 for (j = 0; j < eatscore.Length; j++)
                 {
-                    eatscore[j] = (player[j].wanttoeat != i && (food[currentfood[i]].needclimb && !(player[j].canclimb)) && (food[currentfood[i]].needfly && !(player[j].canfly)) && (food[currentfood[i]].needswim && !(player[j].canswim)) ? 0 : 1) * (player[j].speed * 30 + player[j].power);
+                    eatscore[j] = (player[j].wanttoeat != i || (food[currentfood[i]].needclimb && !(player[j].canclimb)) && (food[currentfood[i]].needfly && !(player[j].canfly)) && (food[currentfood[i]].needswim && !(player[j].canswim)) ? 0 : 1) * (player[j].speed * 30 + player[j].power);
                 }
                 Array.Sort(eatscore, tempplayer);
                 player[tempplayer[3]].hunger += 3 - i;
