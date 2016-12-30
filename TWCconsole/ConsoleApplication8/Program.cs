@@ -34,7 +34,10 @@ namespace ConsoleApplication8
  
         public void use(ref Player player,int deckNumber)
         {
-            player.equi[player.getLastEquispace()] = deckNumber;
+            if (player.getLastEquispace() <= 2)
+            {
+                player.equi[player.getLastEquispace()] = deckNumber;
+            }
             player.hunger -= this.cost;
         }
    }
@@ -159,7 +162,7 @@ namespace ConsoleApplication8
         static void Main()
         {
             
-                System.IO.StreamReader file = new System.IO.StreamReader("Card.txt");
+                System.IO.StreamReader file = new System.IO.StreamReader("../../card/card.txt");
                 int i;
                 int allcardquant = int.Parse(file.ReadLine());
                 Card[] card = new Card[allcardquant];
@@ -188,7 +191,7 @@ namespace ConsoleApplication8
                 }
             
             
-                System.IO.StreamReader file2 = new System.IO.StreamReader("Food.txt");
+                System.IO.StreamReader file2 = new System.IO.StreamReader("../../food/food.txt");
                 int foodquant = int.Parse(file2.ReadLine());
                 Food[] food = new Food[foodquant];
                 for (i = 0; i < foodquant; ++i)
@@ -242,11 +245,7 @@ namespace ConsoleApplication8
                 Player[] player = new Player[4];
                 for (i = 0; i < player.Length; i++)
                 {
-                    player[i] = new Player(0,0,0,0,0);
-                    player[i].number = 3;
-                    player[i].DNA = 4;
-                    player[i].power = 3;
-                    player[i].speed = 3;
+                    player[i] = new Player(4,3,4,3,3);///number DNA hunger power speed
                 }
                 //建立桌面
                 shuffle(ref starting.deck);
@@ -383,6 +382,17 @@ namespace ConsoleApplication8
                 Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].deck[i]].name);
             }
             int choose = int.Parse(Console.ReadLine());
+
+            if (player[currentPlayer].hunger > deck[player[currentPlayer].deck[choose]].cost)///is hunger enough?
+            {
+                player[currentPlayer].hunger -= deck[player[currentPlayer].deck[choose]].cost;///yes
+            }
+            else
+            {
+                Console.WriteLine("you don't have enough hunger");///no
+                return;
+            }
+
             if (deck[player[currentPlayer].deck[choose]].type == "def")
             {
                 ///防禦
@@ -511,10 +521,12 @@ namespace ConsoleApplication8
                 {
                     Console.WriteLine("Player {0}", i);
                     Console.WriteLine("Quantity:{0}", player[i].number);
+                    Console.WriteLine("Hunger:{0}", player[i].hunger);
                     Console.WriteLine("DNA:{0}", player[i].DNA);
                     Console.WriteLine("Equip:{0}", player[i].equi);
                     Console.WriteLine("Power:{0}", player[i].power);
                     Console.WriteLine("Speed:{0}", player[i].speed);
+                    Console.ReadLine();
                 }
             }
         }
@@ -551,7 +563,6 @@ namespace ConsoleApplication8
             }
             int choise = int.Parse(Console.ReadLine());
             if (currentPlayer <= choise) choise += 1;
-            player[currentPlayer].hunger -= cost;
             player[choise].defense(choise != 0,atk);///進行防禦並判定是否叫出AI 
 
         }
