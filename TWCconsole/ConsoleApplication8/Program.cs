@@ -41,7 +41,25 @@ namespace ConsoleApplication8
             player.hunger -= this.cost;
         }
    }
-    
+    class World
+    {
+        public int meatdebuff , vegdebuff, threedebuff,twodebuff,onedebuff,grassdebuff,buff;
+        public bool sp;
+        public string name, info;
+        public World()
+        {
+            this.meatdebuff = 0;
+            this.vegdebuff = 0;
+            this.threedebuff = 0;
+            this.twodebuff = 0;
+            this.onedebuff = 0;
+            this.grassdebuff = 0;
+            this.buff = 0;
+            this.sp = false;
+            this.name = "";
+            this.info = "";
+        }
+    }
     class Player
       {
           public Player(int a, int b, int c, int d, int e)
@@ -57,10 +75,13 @@ namespace ConsoleApplication8
               bool canclimb = false;
               bool canfly = false;
               bool canswim = false;
+              bool vege = false;
+              bool meat = false;
+              bool bug = false;
           }
           public int DNA, number, hunger, power, speed, wanttoeat;
           public int[] equi, deck;
-          public bool canclimb, canfly, canswim;
+          public bool canclimb, canfly, canswim,vege,meat,bug;
           //DNA = 玩家角色持有的DNA數量 number = 玩家角色的族群總數 hunger = 玩家角色的飽食度
           // info = 玩家資訊 equi = 玩家目前已裝備之裝備 speed = 玩家的速度值 power = 玩家的力量值
           public string info;
@@ -125,10 +146,13 @@ namespace ConsoleApplication8
             bool needswim = e;
             int needspeed = f;
             int needpower = g;
+            this.meat = false;
+            this.vege = false;
+            this.bug = false;
         }
         public int needquant, needpower, needspeed;
         // needquant = 進食此食物所需擁有之族群數量 needpower = 進食此食物所需擁有之力量 needspeed = 進食此食物所需擁有之速度
-        public bool needfly, needclimb, needswim;
+        public bool needfly, needclimb, needswim,meat,vege,bug;
         // needfly = 進食此食物是否需要能夠飛行 needclimb = 進食此食物是否需要能夠攀爬 needswim = 進食此食物是否需要能夠游泳
         public string foodname;
         // 該種食物之名稱
@@ -190,7 +214,7 @@ namespace ConsoleApplication8
                     card[i].power = int.Parse(file.ReadLine());
                 }
             
-            
+                ///讀食物
                 System.IO.StreamReader file2 = new System.IO.StreamReader("../../food/food.txt");
                 int foodquant = int.Parse(file2.ReadLine());
                 Food[] food = new Food[foodquant];
@@ -207,6 +231,12 @@ namespace ConsoleApplication8
                 
                 }
                 
+                ///world
+                World[] world = new World[9];
+                for (i = 0; i < 9; i++)
+                {
+                    world[i] = new World();
+                }
 
                 int card_max = 0;
                 for (i = 0; i < allcardquant; i++)
@@ -273,14 +303,16 @@ namespace ConsoleApplication8
                     deal++;
                 }
                 Deck shopUsed = new Deck(starting.deck.Length);
-                //食物
+                
                 int[] currentfood = { 0, 1, 2 };
-
+                int[] fooddebuff = {0,0,0,0 };
+                int currentworld = 0;
+                
                 int currentPlayer = 0;
-            ///Game Start
+
+                ///Game Start
                 do
                 {
-                    bool basicAttacked = false;
                     ///print player hand
                     Console.WriteLine("Your hand:");
                     for (i = 0; i < player[currentPlayer].getLastspace(); i++)
@@ -288,6 +320,32 @@ namespace ConsoleApplication8
                         Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
                     }
                     int act_choose = 0;
+
+                    ///draw food
+                    Random random = new Random();
+                    Console.WriteLine("Current food:");
+                    for(i=0;i<3;i++)
+                    {
+                        currentfood[i] = random.Next(foodquant);
+                        Console.WriteLine("hunger+{0} {1}",3-i,food[currentfood[i]].foodname);
+                    }
+                    ///world effect
+                    currentworld = random.Next(9);
+                    Console.WriteLine("World card : {0}",world[currentworld].name);
+                    Console.WriteLine(world[currentworld].info);
+                    for(i = 0;i < 3 ; i++)
+                    {
+                        int totaldebuff = 0;
+                        if (i == 0) totaldebuff = world[currentworld].threedebuff;
+                        if (i == 1) totaldebuff = world[currentworld].twodebuff;
+                        if (i == 2) totaldebuff = world[currentworld].onedebuff;
+                        if (food[currentfood[i]].meat) totaldebuff += world[currentworld].meatdebuff;
+                        if (food[currentfood[i]].vege) totaldebuff += world[currentworld].vegdebuff;
+                        fooddebuff[i] += totaldebuff + world[currentworld].buff;
+                    }
+
+
+                    bool basicAttacked = false;
                     while (act_choose != 4)
                     {
                         Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)");
@@ -322,11 +380,19 @@ namespace ConsoleApplication8
                                 break;
                         }
                     }
+                    Console.WriteLine("What do you want to eat?");
+                    for (i = 0; i<currentfood.Length ; i++)
+                    {
+                        Console.WriteLine("{0} for {1}",i,food[currentfood[i]]);
+                    }
+                    player[currentPlayer].wanttoeat = int.Parse(Console.ReadLine());
+
+
                     Console.WriteLine("You ended your turn.");
                     Console.WriteLine("CPU1 did nothing");
                     Console.WriteLine("CPU2 did nothing");
                     Console.WriteLine("CPU3 did nothing");
-                    eat(ref currentfood,food,ref player,ref card);
+                    eat(ref currentfood,food,ref player,ref card,fooddebuff);
                     for (i = 0; i < 4; i++)
                     {
                         player[i].DNA += player[i].number;
@@ -416,7 +482,7 @@ namespace ConsoleApplication8
              player[currentPlayer].deck[player[currentPlayer].getLast()] = 0; ///將最後一張手牌放回空格
         }
 
-        static void eat(ref int[] currentfood, Food[] food, ref Player[] player, ref Card[] card)
+        static void eat(ref int[] currentfood, Food[] food, ref Player[] player, ref Card[] card,int[] fooddebuff)
         {
             int i, j, k;
             int[] take = new int[4];
@@ -430,6 +496,7 @@ namespace ConsoleApplication8
                 player[i].canclimb = card[player[i].equi[0]].climb | card[player[i].equi[1]].climb | card[player[i].equi[2]].climb;
                 player[i].canfly = card[player[i].equi[0]].fly | card[player[i].equi[1]].fly | card[player[i].equi[2]].fly;
                 player[i].canswim = card[player[i].equi[0]].swim | card[player[i].equi[1]].swim | card[player[i].equi[2]].swim;
+                if(player[i].wanttoeat == 3 && player[i].vege )player[i].hunger += 1 - fooddebuff[3];
             }
             for (i = 0; i < currentfood.Length; i++)
             {
@@ -442,7 +509,7 @@ namespace ConsoleApplication8
                     eatscore[j] = (player[j].wanttoeat != i && (food[currentfood[i]].needclimb && !(player[j].canclimb)) && (food[currentfood[i]].needfly && !(player[j].canfly)) && (food[currentfood[i]].needswim && !(player[j].canswim)) ? 0 : 1) * (player[j].speed * 30 + player[j].power);
                 }
                 Array.Sort(eatscore, tempplayer);
-                player[tempplayer[3]].hunger += 3 - i;
+                if (player[tempplayer[3]].wanttoeat != i) player[tempplayer[3]].hunger += 3 - i - fooddebuff[i];
             }
         }
 
