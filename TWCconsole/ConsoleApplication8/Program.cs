@@ -496,9 +496,10 @@ namespace ConsoleApplication8
                 player[i].canclimb = card[player[i].equi[0]].climb | card[player[i].equi[1]].climb | card[player[i].equi[2]].climb;
                 player[i].canfly = card[player[i].equi[0]].fly | card[player[i].equi[1]].fly | card[player[i].equi[2]].fly;
                 player[i].canswim = card[player[i].equi[0]].swim | card[player[i].equi[1]].swim | card[player[i].equi[2]].swim;
-
-                if(player[i].wanttoeat == 3 && player[i].vege )player[i].hunger += 1 - fooddebuff[3];
-
+            }
+            for (i = 0; i < player.Length; i++)
+            {
+                if (player[i].wanttoeat == 3 && player[i].vege) player[i].hunger += 1 - fooddebuff[3];
             }
             for (i = 0; i < currentfood.Length; i++)
             {
