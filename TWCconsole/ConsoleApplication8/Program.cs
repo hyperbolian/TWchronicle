@@ -277,6 +277,7 @@ namespace ConsoleApplication8
                 int[] currentfood = { 0, 1, 2 };
 
                 int currentPlayer = 0;
+            ///Game Start
                 do
                 {
                     bool basicAttacked = false;
@@ -325,6 +326,7 @@ namespace ConsoleApplication8
                     Console.WriteLine("CPU1 did nothing");
                     Console.WriteLine("CPU2 did nothing");
                     Console.WriteLine("CPU3 did nothing");
+                    eat(ref currentfood,food,ref player,ref card);
                     for (i = 0; i < 4; i++)
                     {
                         player[i].DNA += player[i].number;
