@@ -180,7 +180,91 @@ namespace ConsoleApplication8
         }
 
     }
-    
+    class AI 
+    {
+        public bool GoShopping,GoAttacking,GoUsing;
+        public int[] ShopAppeal,AtkAppeal,UseAppeal, choose;
+        public int choise;
+        public AI()
+        {
+            this.GoUsing = true;
+            this.GoAttacking = true;
+            this.GoShopping = true;
+            this.ShopAppeal = new int[8];
+        }
+        public void reset()
+        {
+            this.GoUsing = true;
+            this.GoAttacking = true;
+            this.GoShopping = true;
+        }
+        public int AIchoise(ref Player player)
+        {
+            if (this.GoShopping) return 1;
+            if (this.GoAttacking && player.hunger >= 3) return 3;
+
+            return 4;
+        }
+        public void Shopping(Card[] deck ,Deck shop , Player[] player,int currentPlayer)
+        {
+            this.choose = new int[shop.getLast()];
+            bool AIreallyWantSomething = false;
+            for (int i = 0; i < shop.getLastspace(); i++)
+            {
+                ShopAppeal[i] += deck[shop.deck[i]].power * 2;
+                ShopAppeal[i] += deck[shop.deck[i]].speed * 3;
+                ShopAppeal[i] += deck[shop.deck[i]].fly ? 2 : 0;
+                ShopAppeal[i] += deck[shop.deck[i]].swim ? 1 : 0;
+                ShopAppeal[i] += deck[shop.deck[i]].climb ? 2 : 0;
+                ShopAppeal[i] += deck[shop.deck[i]].type == "atk" ? 2 : 0;
+                ShopAppeal[i] += deck[shop.deck[i]].type == "def" ? 1 : 0;
+                if (deck[choose[i]].price > player[currentPlayer].DNA && ShopAppeal[i] >= 5) AIreallyWantSomething = true;
+                else ShopAppeal[i] *= deck[choose[i]].price > player[currentPlayer].DNA ? 0 : 1;
+            }
+            Array.Sort(ShopAppeal, choose);
+            if (AIreallyWantSomething) choise = 9;
+            else if (ShopAppeal[shop.getLast()] == 0) choise = 9;
+            else this.choise = choose[shop.getLast()];
+        }
+        public void Attacking(Player[] player,int currentPlayer)
+        {
+            this.choose = new int[3];
+            this.AtkAppeal = new int[3];
+            int j = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentPlayer != i)
+                {
+                    choose[i] = j;
+                    j++;
+                    AtkAppeal[choose[i]] = player[choose[i]].number * 10 + player[choose[i]].hunger * 9;
+                }
+            }
+            Array.Sort(choose, AtkAppeal);
+            this.choise = choose[3];
+        }
+        public void Using(Card[] deck, Player[] player, int currentPlayer)
+        {
+            this.choose = new int[player[currentPlayer].getLast()];
+            bool AIreallyWannaDoSomething = false;
+            for (int i = 0; i < player[currentPlayer].getLastspace(); i++)
+            {
+                UseAppeal[i] += deck[player[currentPlayer].deck[i]].power * 2;
+                UseAppeal[i] += deck[player[currentPlayer].deck[i]].speed * 3;
+                UseAppeal[i] += deck[player[currentPlayer].deck[i]].fly ? 2 : 0;
+                UseAppeal[i] += deck[player[currentPlayer].deck[i]].swim ? 1 : 0;
+                UseAppeal[i] += deck[player[currentPlayer].deck[i]].climb ? 2 : 0;
+                UseAppeal[i] += deck[player[currentPlayer].deck[i]].type == "atk" ? 3 : 0;
+                UseAppeal[i] *= deck[player[currentPlayer].deck[i]].type == "def" ? 0 : 1;
+                if (deck[choose[i]].cost > player[currentPlayer].hunger && UseAppeal[i] >= 5) AIreallyWannaDoSomething = true;
+                else UseAppeal[i] *= deck[choose[i]].cost > player[currentPlayer].hunger ? 0 : 1;
+            }
+            Array.Sort(UseAppeal, choose);
+            if (AIreallyWannaDoSomething) choise = 9;
+            else if (UseAppeal[player[currentPlayer].getLast()] == 0) choise = 9;
+            else this.choise = choose[player[currentPlayer].getLast()];
+        }
+    }
     class Program
     {
         static void Main()
@@ -303,23 +387,25 @@ namespace ConsoleApplication8
                     deal++;
                 }
                 Deck shopUsed = new Deck(starting.deck.Length);
+
+            ///建立AI
+                AI[] ai = new AI[3];
+            for(i=0;i<3;i++)
+            {
+                ai[i] = new AI();
+            }
                 
                 int[] currentfood = { 0, 1, 2 };
                 int[] fooddebuff = {0,0,0,0 };
                 int currentworld = 0;
                 
                 int currentPlayer = 0;
+                int[] eatscore = new int[3];
 
                 ///Game Start
                 do
                 {
-                    ///print player hand
-                    Console.WriteLine("Your hand:");
-                    for (i = 0; i < player[currentPlayer].getLastspace(); i++)
-                    {
-                        Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
-                    }
-                    int act_choose = 0;
+                    
 
                     ///draw food
                     Random random = new Random();
@@ -344,20 +430,38 @@ namespace ConsoleApplication8
                         fooddebuff[i] += totaldebuff + world[currentworld].buff;
                     }
 
-
+                    //////////////////////////////
+                while(currentPlayer < 4)
+                {
+                    int act_choose = 0;
                     bool basicAttacked = false;
+                    ai[currentPlayer - 1].reset();
                     while (act_choose != 4)
                     {
-                        Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)");
-                        if(!basicAttacked)
-                        Console.WriteLine("3 for basic attack\n4 for end turn");
-                        else Console.WriteLine("3 for end turn");
-                        act_choose = int.Parse(Console.ReadLine());
-                        if (basicAttacked && act_choose == 3) act_choose++;
+                        if (currentPlayer == 0)
+                        {
+                            ///print player hand
+                            Console.WriteLine("Your hand:");
+                            for (i = 0; i < player[currentPlayer].getLastspace(); i++)
+                            {
+                                Console.WriteLine("{0}", deck[player[currentPlayer].deck[i]].name);
+                            }
+                            Console.WriteLine("Choose your act:\n0 for use hand card\n1 for shopping\n2 for checking info(s)");
+                            if (!basicAttacked)
+                                Console.WriteLine("3 for basic attack\n4 for end turn");
+                            else Console.WriteLine("3 for end turn");
+                            act_choose = int.Parse(Console.ReadLine());
+                            if (basicAttacked && act_choose == 3) act_choose++;
+                        }
+                        else
+                        {
+                            if (shop.getLast() == -1) ai[currentPlayer - 1].GoShopping = false;
+                            act_choose = ai[currentPlayer - 1].AIchoise(ref player[currentPlayer]);
+                        }
                         switch (act_choose)
                         {
                             case 0:
-                                use(ref deck,ref player,ref shopUsed,currentPlayer);
+                                use(ref deck,ref player,ref shopUsed,currentPlayer,ai[currentPlayer]);
                                 break;
                             case 1:
                                 if (shop.getLast() == -1)///shop沒牌啦
@@ -366,32 +470,45 @@ namespace ConsoleApplication8
                                 }
                                 else
                                 {
-                                    buy(ref deck, ref shopdeck, ref shop,ref player,ref shopUsed ,currentPlayer);
+                                    buy(ref deck, ref shopdeck, ref shop,ref player,ref shopUsed ,currentPlayer,ref ai[currentPlayer-1]);
                                 }
                                 break;
                             case 2:
                                 show(ref deck, ref shopdeck, ref shop, ref player,currentPlayer);
                                 break;
                             case 3:
-                                basic_attack(ref player,currentPlayer);
+                                attack(ref player,currentPlayer,1,1,ai[currentPlayer]);
                                 basicAttacked = true;
                                 break;
                             default:
                                 break;
                         }
                     }
-                    Console.WriteLine("What do you want to eat?");
-                    for (i = 0; i<currentfood.Length ; i++)
+                    if (currentPlayer == 0)
                     {
-                        Console.WriteLine("{0} for {1}",i,food[currentfood[i]]);
+                        Console.WriteLine("What do you want to eat?");
+                        for (i = 0; i < currentfood.Length; i++)
+                        {
+                            Console.WriteLine("{0} for {1}", i, food[currentfood[i]]);
+                        }
+                        player[currentPlayer].wanttoeat = int.Parse(Console.ReadLine());
+                        Console.WriteLine("You ended your turn.");
                     }
-                    player[currentPlayer].wanttoeat = int.Parse(Console.ReadLine());
+                    else
+                    {
+                        for (i = 0; i < 3; i++)
+                        {
+                            eatscore[i] = ((food[currentfood[i]].needclimb && !(player[currentPlayer].canclimb)) && (food[currentfood[i]].needfly && !(player[currentPlayer].canfly)) && (food[currentfood[i]].needswim && !(player[currentPlayer].canswim)) && (food[currentfood[i]].meat && !(player[currentPlayer].meat )) ? 0 : 1) * (player[currentPlayer].speed * 30 + player[currentPlayer].power);
+                        }
+                        Array.Sort(eatscore);
+                        if (eatscore[2] != 0) player[currentPlayer].wanttoeat = eatscore[2];
+                        else player[currentPlayer].wanttoeat = 3;
+                    }
+                    currentPlayer += 1;
+                }
 
-
-                    Console.WriteLine("You ended your turn.");
-                    Console.WriteLine("CPU1 did nothing");
-                    Console.WriteLine("CPU2 did nothing");
-                    Console.WriteLine("CPU3 did nothing");
+                    /////////////////////
+                    
                     eat(ref currentfood,food,ref player,ref card,fooddebuff);
                     for (i = 0; i < 4; i++)
                     {
@@ -436,20 +553,23 @@ namespace ConsoleApplication8
             Array.Sort(temp, cards);
         }
 
-
-
-
-
-
-        static void use(ref Card[] deck, ref Player[] player,ref Deck shopUsed, int currentPlayer)
+        static void use(ref Card[] deck, ref Player[] player,ref Deck shopUsed, int currentPlayer,AI ai)
         {
-            Console.WriteLine("Which card do you want to use:");
-            int i;
-            for (i = 0; i < player[currentPlayer].getLastspace(); i++)
+            int choose = 0;
+            if (currentPlayer == 0)
             {
-                Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].deck[i]].name);
+                Console.WriteLine("Which card do you want to use:");
+                int i;
+                for (i = 0; i < player[currentPlayer].getLastspace(); i++)
+                {
+                    Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].deck[i]].name);
+                }
+                choose = int.Parse(Console.ReadLine());
             }
-            int choose = int.Parse(Console.ReadLine());
+            else
+            {
+                choose = ai.choise;
+            }
 
             if (player[currentPlayer].hunger > deck[player[currentPlayer].deck[choose]].cost)///is hunger enough?
             {
@@ -469,7 +589,7 @@ namespace ConsoleApplication8
             else if (deck[player[currentPlayer].deck[choose]].type == "atk")
             {
                 ///攻擊card_attack
-                card_attack(ref player, currentPlayer, deck[player[currentPlayer].deck[choose]].atk, deck[player[currentPlayer].deck[choose]].cost);
+                attack(ref player, currentPlayer, deck[player[currentPlayer].deck[choose]].atk, deck[player[currentPlayer].deck[choose]].cost,ai);
                 shopUsed.deck[shopUsed.getLastspace()] = player[currentPlayer].deck[choose]; ///棄牌
             }
             else 
@@ -516,20 +636,36 @@ namespace ConsoleApplication8
             }
         }
 
-
-        static void buy(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,ref Deck shopUsed,int currentPlayer)
+        static void buy(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,ref Deck shopUsed,int currentPlayer,ref AI ai)
         {
+            int choose = 0;
             int i;
-            Console.WriteLine("What would you like to buy:");
-            for (i = 0; i < shop.getLastspace(); i++)
+            if (notAI(currentPlayer))
             {
-                Console.WriteLine("{0} for {1}", i, deck[shop.deck[i]].name);
+                Console.WriteLine("What would you like to buy:");
+                for (i = 0; i < shop.getLastspace(); i++)
+                {
+                    Console.WriteLine("{0} for {1}", i, deck[shop.deck[i]].name);
+                }
+                Console.WriteLine("9 for leave");
+                choose = int.Parse(Console.ReadLine());
             }
-            int choose = int.Parse(Console.ReadLine());
+            else ///AI
+            {
+                ai.Shopping(deck, shop, player, currentPlayer);
+                choose = ai.choise;
+            }  ///AI
+            if (choose == 9) 
+            {
+                ai.GoShopping = false;
+                if(!notAI(currentPlayer))Console.WriteLine("CPU{0} leaved the shop. ",currentPlayer);
+                return; 
+            }
             if (deck[shop.deck[choose]].cost <= player[0].DNA)
             {
-                Console.WriteLine("It costs you {0} DNA!", deck[shop.deck[choose]].cost);
-                player[0].DNA -= deck[shop.deck[choose]].cost;
+                if (notAI(currentPlayer)) Console.WriteLine("It costs you {0} DNA!", deck[shop.deck[choose]].cost);
+                else Console.WriteLine("CPU{0} choose to buy {1} and that cost it {2} DNA", currentPlayer, deck[shop.deck[choose]].name, deck[shop.deck[choose]].cost);
+                player[currentPlayer].DNA -= deck[shop.deck[choose]].cost;
 
 
                player[currentPlayer].deck[player[currentPlayer].getLastspace()] = shop.deck[choose];
@@ -562,7 +698,6 @@ namespace ConsoleApplication8
                 Console.WriteLine("you don't have enough DNA!");
             }
         }
-
 
         static void show(ref Card[] deck, ref Deck shopdeck, ref Deck shop, ref Player[] player,int currentPlayer)
         {
@@ -603,41 +738,34 @@ namespace ConsoleApplication8
             }
         }
 
-        static void basic_attack(ref Player[] player,int currentPlayer)
-          {
-              Console.WriteLine("Which player would you want to attack");
-              int j = 0;
-              for (int i = 0; i < 4; i++)
-              {
-                  if (currentPlayer != i)
-                  {
-                      Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
-                      j++;
-                  }
-              }
-              int choise = int.Parse(Console.ReadLine());
-              if (currentPlayer <= choise) choise += 1;
-              player[currentPlayer].hunger -= 1;
-              player[choise].defense(choise != 0,1);///進行防禦並判定是否叫出AI 
-
-          }
-        static void card_attack(ref Player[] player, int currentPlayer,int atk,int cost)
+        static void attack(ref Player[] player, int currentPlayer,int atk,int cost,AI ai)
         {
-            Console.WriteLine("Which player would you want to attack");
-            int j = 0;
-            for (int i = 0; i < 4; i++)
+            int choise;
+            if (notAI(currentPlayer))
             {
-                if (currentPlayer != i)
+                Console.WriteLine("Which player would you want to attack");
+                int j = 0;
+                for (int i = 0; i < 4; i++)
                 {
-                    Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
-                    j++;
+                    if (currentPlayer != i)
+                    {
+                        Console.WriteLine("{1} for player{0}", i, j);///印出非自己的腳色 並給予編號
+                        j++;
+                    }
+                    Console.WriteLine("4 for cancel");
                 }
+                choise = int.Parse(Console.ReadLine());
+                if (currentPlayer <= choise) choise += 1;
             }
-            int choise = int.Parse(Console.ReadLine());
-            if (currentPlayer <= choise) choise += 1;
-            player[choise].defense(choise != 0,atk);///進行防禦並判定是否叫出AI 
+            else 
+            {
+                ai.Attacking(player, currentPlayer);
+                choise = ai.choise;
+            }
+            if(choise!=4)player[choise].defense(choise != 0, atk);///進行防禦並判定是否叫出AI 
 
         }
+
         static void recycle(ref Deck shopdeck,ref Deck shopUsed)
         {
             Random rand = new Random();
@@ -654,6 +782,12 @@ namespace ConsoleApplication8
                 shopdeck.deck[i] = shopUsed.deck[i];
                 shopUsed.deck[i] = 0;
             }
+        } 
+
+        static bool notAI(int currentPlayer)
+        {
+            return currentPlayer == 0;
         }
     }
+   
 }
