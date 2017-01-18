@@ -32,12 +32,9 @@ namespace ConsoleApplication8
         public bool fly, climb, swim;
         //fly = 是否能飛 climb = 是否能攀爬 swim = 是否能游泳
  
-        public void use(ref Player player,int deckNumber)
+        public void use(ref Player player,int deckNumber,AI ai,int currentPlayer,ref Deck shopUsed)
         {
-            if (player.getLastEquispace() <= 2)
-            {
-                player.equi[player.getLastEquispace()] = deckNumber;
-            }
+            player.equi[player.getLastEquispace()] = deckNumber;
             player.hunger -= this.cost;
         }
    }
@@ -134,6 +131,18 @@ namespace ConsoleApplication8
               }
               return i ;
           }
+        public bool NeedUnEquip()
+          {
+              if (getLastEquispace() < 2) return false;
+              return true;
+          }
+        public void unequip(ref Deck shopUsed,int dropChoise)
+        {
+            shopUsed.deck[shopUsed.getLastspace()] = this.equi[dropChoise];
+            this.equi[dropChoise] = 0;
+            Array.Sort(this.equi);
+            Array.Reverse(this.equi);
+        }
       }
     class Food
     {
@@ -264,6 +273,11 @@ namespace ConsoleApplication8
             else if (UseAppeal[player[currentPlayer].getLast()] == 0) choise = 9;
             else this.choise = choose[player[currentPlayer].getLast()];
         }
+        public int unequip()
+        {
+            Random ramdom = new Random();
+            return ramdom.Next(0,2);
+        }
     }
     class Program
     {
@@ -389,7 +403,7 @@ namespace ConsoleApplication8
                 Deck shopUsed = new Deck(starting.deck.Length);
 
             ///建立AI
-                AI[] ai = new AI[3];
+                AI[] ai = new AI[4];
             for(i=0;i<3;i++)
             {
                 ai[i] = new AI();
@@ -435,7 +449,7 @@ namespace ConsoleApplication8
                 {
                     int act_choose = 0;
                     bool basicAttacked = false;
-                    ai[currentPlayer - 1].reset();
+                    ai[currentPlayer].reset();
                     while (act_choose != 4)
                     {
                         if (currentPlayer == 0)
@@ -455,8 +469,8 @@ namespace ConsoleApplication8
                         }
                         else
                         {
-                            if (shop.getLast() == -1) ai[currentPlayer - 1].GoShopping = false;
-                            act_choose = ai[currentPlayer - 1].AIchoise(ref player[currentPlayer]);
+                            if (shop.getLast() == -1) ai[currentPlayer].GoShopping = false;
+                            act_choose = ai[currentPlayer].AIchoise(ref player[currentPlayer]);
                         }
                         switch (act_choose)
                         {
@@ -470,7 +484,7 @@ namespace ConsoleApplication8
                                 }
                                 else
                                 {
-                                    buy(ref deck, ref shopdeck, ref shop,ref player,ref shopUsed ,currentPlayer,ref ai[currentPlayer-1]);
+                                    buy(ref deck, ref shopdeck, ref shop,ref player,ref shopUsed ,currentPlayer,ref ai[currentPlayer]);
                                 }
                                 break;
                             case 2:
@@ -556,7 +570,7 @@ namespace ConsoleApplication8
         static void use(ref Card[] deck, ref Player[] player,ref Deck shopUsed, int currentPlayer,AI ai)
         {
             int choose = 0;
-            if (currentPlayer == 0)
+            if (notAI(currentPlayer))
             {
                 Console.WriteLine("Which card do you want to use:");
                 int i;
@@ -595,7 +609,28 @@ namespace ConsoleApplication8
             else 
             { 
                 ///裝備
-                deck[player[currentPlayer].deck[choose]].use(ref player[currentPlayer], player[currentPlayer].deck[choose]); 
+                if(player[currentPlayer].NeedUnEquip())
+                {
+                    int dropChoise;
+                    if (notAI(currentPlayer))
+                    {
+                        Console.WriteLine("your equipment place is full. please drop one.");
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Console.WriteLine("{0} for {1}", i, deck[player[currentPlayer].equi[i]].name);
+                        }
+                        dropChoise = int.Parse(Console.ReadLine());
+                        Console.WriteLine("you dropped {0}",deck[player[currentPlayer].equi[dropChoise]].name);
+                    }
+                    else
+                    {
+                        Console.WriteLine("CPU{0}'s equipment place is full.",currentPlayer);
+                        dropChoise = ai.unequip();
+                        Console.WriteLine("CPU dropped {0}",deck[player[currentPlayer].equi[dropChoise]].name);
+                    }
+                    player[currentPlayer].unequip(ref shopUsed, dropChoise);
+                }
+                deck[player[currentPlayer].deck[choose]].use(ref player[currentPlayer], player[currentPlayer].deck[choose],ai,currentPlayer,ref shopUsed); 
             }
 
              player[currentPlayer].deck[choose] = player[currentPlayer].deck[player[currentPlayer].getLast()];
@@ -657,8 +692,7 @@ namespace ConsoleApplication8
             }  ///AI
             if (choose == 9) 
             {
-                ai.GoShopping = false;
-                if(!notAI(currentPlayer))Console.WriteLine("CPU{0} leaved the shop. ",currentPlayer);
+                if (!notAI(currentPlayer)) { Console.WriteLine("CPU{0} leaved the shop. ", currentPlayer); ai.GoShopping = false; }
                 return; 
             }
             if (deck[shop.deck[choose]].cost <= player[0].DNA)
@@ -788,6 +822,5 @@ namespace ConsoleApplication8
         {
             return currentPlayer == 0;
         }
-    }
-   
+    }   
 }
