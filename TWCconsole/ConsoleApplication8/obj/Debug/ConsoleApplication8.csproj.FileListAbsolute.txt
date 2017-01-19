@@ -10,6 +10,3 @@ C:\Users\eric\Desktop\TWchronicle\TWCconsole\ConsoleApplication8\obj\Debug\Conso
 C:\Users\eric\Desktop\TWchronicle\TWCconsole\ConsoleApplication8\bin\Debug\ConsoleApplication8.exe
 C:\Users\eric\Desktop\TWchronicle\TWCconsole\ConsoleApplication8\bin\Debug\ConsoleApplication8.pdb
 C:\Users\eric\Desktop\TWchronicle\TWCconsole\ConsoleApplication8\obj\Debug\ConsoleApplication8.csprojResolveAssemblyReference.cache
-C:\Users\Administrator\Documents\GitHub\TWchronicle\TWCconsole\ConsoleApplication8\bin\Debug\ConsoleApplication8.exe.config
-C:\Users\Administrator\Documents\GitHub\TWchronicle\TWCconsole\ConsoleApplication8\obj\Debug\ConsoleApplication8.exe
-C:\Users\Administrator\Documents\GitHub\TWchronicle\TWCconsole\ConsoleApplication8\obj\Debug\ConsoleApplication8.pdb
