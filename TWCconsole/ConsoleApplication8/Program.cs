@@ -40,22 +40,23 @@ namespace ConsoleApplication8
    }
     class World
     {
-        public int meatdebuff , vegdebuff, threedebuff,twodebuff,onedebuff,grassdebuff,buff;
+        public int meatdebuff, vegdebuff, threedebuff, twodebuff, onedebuff, grassdebuff, buff;
         public bool sp;
         public string name, info;
-        public World()
+        public World(int a, int b, int c, int d, int e, int f, int g, bool h, string m, string n)
         {
-            this.meatdebuff = 0;
-            this.vegdebuff = 0;
-            this.threedebuff = 0;
-            this.twodebuff = 0;
-            this.onedebuff = 0;
-            this.grassdebuff = 0;
-            this.buff = 0;
-            this.sp = false;
-            this.name = "";
-            this.info = "";
+            this.meatdebuff = a;
+            this.vegdebuff = b;
+            this.threedebuff = c;
+            this.twodebuff = d;
+            this.onedebuff = e;
+            this.grassdebuff = f;
+            this.buff = g;
+            this.sp = h;
+            this.name = m;
+            this.info = n;
         }
+
     }
     class Player
       {
@@ -283,19 +284,36 @@ namespace ConsoleApplication8
     {
         static void Main()
         {
-            
-                System.IO.StreamReader file = new System.IO.StreamReader("../../card/card.txt");
-                int i;
-                int allcardquant = int.Parse(file.ReadLine());
+
+            DirectoryInfo di = new DirectoryInfo(@"C:\Documents and Settings\David Wei\My Documents\Visual Studio 2010\Projects\HW3-2\HW3-2\card");
+            int i = 0;
+            foreach (var fi in di.GetFiles())
+            {
+                i += 1;
+            }
+            Console.WriteLine(i);
+            int allcardquant = i;
+            string[] filelist = new string[i];
+            i = 0;
+            foreach (var fi in di.GetFiles())
+            {
+                filelist[i] = fi.Name;
+                i++;
+            }
+
+            for (i = 0; i < allcardquant; ++i)
+            {
+                System.IO.StreamReader file = new System.IO.StreamReader(@"C:\Documents and Settings\David Wei\My Documents\Visual Studio 2010\Projects\HW3-2\HW3-2\card\" + filelist[i]);
+
+                /*int allcardquant = int.Parse(file.ReadLine());*/
                 Card[] card = new Card[allcardquant];
-                for (i = 0; i < allcardquant; ++i)
+                /*for (i = 0; i < allcardquant; ++i)*/
                 {
-                    card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, false, false, false, 0, 0);
+                    card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, true, true, true, 0, 0);
                     /*card[i] = new Card(file.ReadLine(), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()), file.ReadLine(),
                         file.ReadLine(), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()), int.Parse(file.ReadLine()),
                         bool.Parse(file.ReadLine()), bool.Parse(file.ReadLine()), bool.Parse(file.ReadLine()), int.Parse(file.ReadLine())
                         , int.Parse(file.ReadLine()));*/
-
 
                     card[i].name = file.ReadLine();
                     card[i].price = int.Parse(file.ReadLine());
@@ -311,30 +329,84 @@ namespace ConsoleApplication8
                     card[i].speed = int.Parse(file.ReadLine());
                     card[i].power = int.Parse(file.ReadLine());
                 }
-            
-                ///讀食物
-                System.IO.StreamReader file2 = new System.IO.StreamReader("../../food/food.txt");
-                int foodquant = int.Parse(file2.ReadLine());
+            }
+
+
+
+            DirectoryInfo dy = new DirectoryInfo(@"../../food/food.txt");
+            int y = 0;
+            foreach (var fi in dy.GetFiles())
+            {
+                y += 1;
+            }
+            Console.WriteLine(y);
+            int foodquant = y;
+            string[] foodlist = new string[y];
+            y = 0;
+            foreach (var fi in dy.GetFiles())
+            {
+                foodlist[y] = fi.Name;
+                y++;
+            }
+
+            /*int i;
+            int foodquant = int.Parse(file.ReadLine());*/
+            /*Food[] food = new Food[foodquant];*/
+            for (y = 0; y < foodquant; ++y)
+            {
+                System.IO.StreamReader file = new System.IO.StreamReader(@"../../food/food.txt" + filelist[i]);
                 Food[] food = new Food[foodquant];
-                for (i = 0; i < foodquant; ++i)
+                food[y] = new Food("0", 0, true, true, true, 0, 0);
+                food[y].foodname = file.ReadLine();
+                food[y].needquant = int.Parse(file.ReadLine());
+                food[y].needfly = bool.Parse(file.ReadLine());
+                food[y].needclimb = bool.Parse(file.ReadLine());
+                food[y].needswim = bool.Parse(file.ReadLine());
+                food[y].needspeed = int.Parse(file.ReadLine());
+                food[y].needpower = int.Parse(file.ReadLine());
+
+            }
+
+            DirectoryInfo ei = new DirectoryInfo(@"../../world/world.txt");
+            int x = 0;
+            foreach (var fi in ei.GetFiles())
+            {
+                x += 1;
+            }
+            Console.WriteLine(x);
+            int worldquant = x;
+            string[] worldlist = new string[x];
+            x = 0;
+            foreach (var fi in ei.GetFiles())
+            {
+                worldlist[x] = fi.Name;
+                x++;
+            }
+
+            /*int i;
+            int foodquant = int.Parse(file.ReadLine());*/
+            /*Food[] food = new Food[foodquant];*/
+            for (x = 0; x < worldquant; ++x)
+            {
+                System.IO.StreamReader file = new System.IO.StreamReader(@"C:\Documents and Settings\David Wei\My Documents\Visual Studio 2010\Projects\HW3-2\HW3-2\world\" + filelist[i]);
+                for (x = 0; i < worldquant; x++)
                 {
-                    food[i] = new Food("0", 0, true, true, true, 0, 0);
-                    food[i].foodname = file2.ReadLine();
-                    food[i].needquant = int.Parse(file2.ReadLine());
-                    food[i].needfly = bool.Parse(file2.ReadLine());
-                    food[i].needclimb = bool.Parse(file2.ReadLine());
-                    food[i].needswim = bool.Parse(file2.ReadLine());
-                    food[i].needspeed = int.Parse(file2.ReadLine());
-                    food[i].needpower = int.Parse(file2.ReadLine());
-                
+                    World[] world = new World[worldquant];
+                    world[i] = new World(0, 0, 0, 0, 0, 0, 0, false, "0", "0");
+                    world[i].vegdebuff = int.Parse(file.ReadLine());
+                    world[i].threedebuff = int.Parse(file.ReadLine());
+                    world[i].twodebuff = int.Parse(file.ReadLine());
+                    world[i].onedebuff = int.Parse(file.ReadLine());
+                    world[i].grassdebuff = int.Parse(file.ReadLine());
+                    world[i].buff = int.Parse(file.ReadLine());
+                    world[i].sp = bool.Parse(file.ReadLine());
+                    world[i].name = file.ReadLine();
+                    world[i].info = file.ReadLine();
+
+
                 }
-                
-                ///world
-                World[] world = new World[9];
-                for (i = 0; i < 9; i++)
-                {
-                    world[i] = new World();
-                }
+
+            }
 
                 int card_max = 0;
                 for (i = 0; i < allcardquant; i++)
