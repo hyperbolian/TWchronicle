@@ -1,0 +1,9 @@
+squirrel
+false
+true
+false
+true
+false
+false
+4
+1

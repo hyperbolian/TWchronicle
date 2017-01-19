@@ -1,0 +1,9 @@
+buffalo
+false
+false
+false
+true
+false
+false
+2
+4

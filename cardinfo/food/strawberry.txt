@@ -1,0 +1,9 @@
+strawberry
+false
+false
+false
+false
+true
+false
+1
+1
