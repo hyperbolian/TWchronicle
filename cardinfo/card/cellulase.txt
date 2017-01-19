@@ -1,0 +1,13 @@
+cellulase
+6
+1
+equip
+your avatar can eat grass after using this card
+2
+0
+0
+false
+false
+false
+0
+0

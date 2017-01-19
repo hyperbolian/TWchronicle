@@ -1,0 +1,13 @@
+mucosalbreathing
+6
+1
+equip
+your avatar can breath in water after using this card
+3
+0
+0
+false
+false
+true
+0
+0

@@ -1,0 +1,12 @@
+Formosan black bear
+5
+4
+true
+true
+true
+false
+false
+true
+3
+3
+hibernate

@@ -1,0 +1,9 @@
+0
+0
+0
+0
+0
+0
+true
+Typhoon
+A huge typhoon approaches. Every player can't attack this round.

@@ -1,0 +1,9 @@
+0
+0
+0
+0
+0
+0
+true
+Forest Fire
+Forest started to burn. There will be no fruits and grass this round.

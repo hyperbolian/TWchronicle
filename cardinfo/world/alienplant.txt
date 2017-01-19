@@ -1,0 +1,9 @@
+1
+0
+0
+0
+1
+0
+false
+Alien Plant invasion
+Non-native plants invade, causing shortage of foods. Satiation that plants offer -1.

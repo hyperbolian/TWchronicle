@@ -1,0 +1,12 @@
+taiwan deer
+3
+3
+true
+false
+false
+false
+false
+false
+3
+3
+alertness

@@ -1,0 +1,12 @@
+Formosan macaques
+2
+3
+true
+true
+true
+false
+false
+true
+3
+3
+social

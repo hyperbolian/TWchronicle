@@ -1,0 +1,13 @@
+food storage
+3
+0
+equip
+save your food and eat it next round
+4
+0
+0
+false
+false
+false
+0
+0
