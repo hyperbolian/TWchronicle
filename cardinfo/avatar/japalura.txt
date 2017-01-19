@@ -1,0 +1,12 @@
+Swinhoe's japalura
+1
+4
+false
+false
+true
+false
+false
+true
+4
+4
+sleep/docked

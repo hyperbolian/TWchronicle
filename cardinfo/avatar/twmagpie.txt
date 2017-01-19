@@ -1,0 +1,12 @@
+Taiwan Blue Magpie
+1
+4
+false
+false
+true
+true
+false
+false
+4
+3
+net protecting

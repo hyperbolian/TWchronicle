@@ -1,0 +1,13 @@
+reproduction
+4
+2
+equip
+gains 1 quantity
+4
+0
+0
+false
+false
+false
+0
+0

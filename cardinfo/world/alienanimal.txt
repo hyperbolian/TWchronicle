@@ -1,0 +1,9 @@
+1
+1
+1
+1
+1
+0
+false
+Alien Animal invasion
+Non-native animal invade, causing shortage of foods. Satiation any food offers -1.

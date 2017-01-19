@@ -1,0 +1,9 @@
+0
+0
+0
+0
+0
+0
+true
+Volocano Eruption
+Volcano has erupted.Every player loses one quantity.

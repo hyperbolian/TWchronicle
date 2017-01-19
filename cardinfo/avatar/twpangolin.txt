@@ -1,0 +1,12 @@
+Taiwan pangolin
+3
+2
+false
+false
+true
+true
+true
+true
+4
+3
+scale and shell

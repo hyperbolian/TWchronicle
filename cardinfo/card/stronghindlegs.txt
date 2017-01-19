@@ -1,0 +1,13 @@
+stronghindlegs
+6
+1
+equip
+your avatar gains power and speed after using this card
+2
+0
+0
+false
+false
+false
+1
+1

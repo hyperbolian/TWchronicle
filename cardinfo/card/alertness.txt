@@ -1,0 +1,13 @@
+alertness
+3
+1
+equip
+your avatar can avoid a attack for one time after using this card
+3
+0
+0
+false
+false
+false
+1
+0

@@ -1,0 +1,13 @@
+sharpclaw
+6
+1
+equip
+your avatar can climb after using this card
+3
+0
+0
+false
+true
+false
+0
+1
