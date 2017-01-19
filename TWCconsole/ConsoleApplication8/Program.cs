@@ -322,13 +322,13 @@ namespace ConsoleApplication8
         static void Main()
         {
 
-            DirectoryInfo di = new DirectoryInfo(@"../../cardinfo/card");
+            DirectoryInfo di = new DirectoryInfo(@"../../../../cardinfo/card");
             int i = 0;
             foreach (var fi in di.GetFiles())
             {
                 i += 1;
             }
-            Console.WriteLine(i);
+            //Console.WriteLine(i);
             int allcardquant = i;
             string[] filelist = new string[i];
             i = 0;
@@ -338,12 +338,12 @@ namespace ConsoleApplication8
                 i++;
             }
 
+            Card[] card = new Card[allcardquant];
             for (i = 0; i < allcardquant; ++i)
             {
-                System.IO.StreamReader file = new System.IO.StreamReader(@"../../cardinfo/card/" + filelist[i]);
+                System.IO.StreamReader file = new System.IO.StreamReader(@"../../../../cardinfo/card/" + filelist[i]);
 
                 /*int allcardquant = int.Parse(file.ReadLine());*/
-                Card[] card = new Card[allcardquant];
                 /*for (i = 0; i < allcardquant; ++i)*/
                 {
                     card[i] = new Card("0", 0, 0, " 0", " 0", 0, 0, 0, true, true, true, 0, 0);
@@ -370,13 +370,13 @@ namespace ConsoleApplication8
 
 
 
-            DirectoryInfo dy = new DirectoryInfo(@"../../cardinfo/food");
+            DirectoryInfo dy = new DirectoryInfo(@"../../../../cardinfo/food");
             int y = 0;
             foreach (var fi in dy.GetFiles())
             {
                 y += 1;
             }
-            Console.WriteLine(y);
+            //Console.WriteLine(y);
             int foodquant = y;
             string[] foodlist = new string[y];
             y = 0;
@@ -389,10 +389,10 @@ namespace ConsoleApplication8
             /*int i;
             int foodquant = int.Parse(file.ReadLine());*/
             /*Food[] food = new Food[foodquant];*/
+            Food[] food = new Food[foodquant];
             for (y = 0; y < foodquant; ++y)
             {
                 System.IO.StreamReader file = new System.IO.StreamReader(@"../../cardinfo/food/" + foodlist[i]);
-                Food[] food = new Food[foodquant];
                 food[y] = new Food("0", 0, true, true, true, 0, 0);
                 food[y].foodname = file.ReadLine();
                 food[y].needquant = int.Parse(file.ReadLine());
@@ -404,7 +404,7 @@ namespace ConsoleApplication8
 
             }
 
-            DirectoryInfo ei = new DirectoryInfo(@"../../cardinfo/world");
+            DirectoryInfo ei = new DirectoryInfo(@"../../../../cardinfo/world");
             int x = 0;
             foreach (var fi in ei.GetFiles())
             {
@@ -423,12 +423,12 @@ namespace ConsoleApplication8
             /*int i;
             int foodquant = int.Parse(file.ReadLine());*/
             /*Food[] food = new Food[foodquant];*/
+            World[] world = new World[worldquant];
             for (x = 0; x < worldquant; ++x)
             {
                 System.IO.StreamReader file = new System.IO.StreamReader(@"../../cardinfo/world/" + worldlist[i]);
                 for (x = 0; i < worldquant; x++)
                 {
-                    World[] world = new World[worldquant];
                     world[i] = new World(0, 0, 0, 0, 0, 0, 0, false, "0", "0");
                     world[i].vegdebuff = int.Parse(file.ReadLine());
                     world[i].threedebuff = int.Parse(file.ReadLine());
