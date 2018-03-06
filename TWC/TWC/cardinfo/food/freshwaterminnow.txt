@@ -1,0 +1,9 @@
+freshwater minnow
+false
+false
+true
+true
+false
+false
+2
+1

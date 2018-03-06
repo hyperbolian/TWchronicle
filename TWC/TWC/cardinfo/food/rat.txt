@@ -1,0 +1,9 @@
+rat
+false
+false
+false
+true
+false
+false
+3
+2

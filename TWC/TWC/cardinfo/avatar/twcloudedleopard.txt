@@ -1,0 +1,12 @@
+Formosan clouded leopard
+4
+4
+false
+true
+false
+false
+false
+true
+3
+3
+height ambush

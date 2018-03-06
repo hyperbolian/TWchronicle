@@ -390,17 +390,19 @@ namespace ConsoleApplication8
             int foodquant = int.Parse(file.ReadLine());*/
             /*Food[] food = new Food[foodquant];*/
             Food[] food = new Food[foodquant];
-            for (y = 0; y < foodquant; ++y)
+            for (i = 0; i < foodquant; ++i)
             {
-                System.IO.StreamReader file = new System.IO.StreamReader(@"../../cardinfo/food/" + foodlist[i]);
-                food[y] = new Food("0", 0, true, true, true, 0, 0);
-                food[y].foodname = file.ReadLine();
-                food[y].needquant = int.Parse(file.ReadLine());
-                food[y].needfly = bool.Parse(file.ReadLine());
-                food[y].needclimb = bool.Parse(file.ReadLine());
-                food[y].needswim = bool.Parse(file.ReadLine());
-                food[y].needspeed = int.Parse(file.ReadLine());
-                food[y].needpower = int.Parse(file.ReadLine());
+                System.IO.StreamReader file = new System.IO.StreamReader(@"../../../../cardinfo/food/" + foodlist[i]);
+                food[i] = new Food("0", 0, true, true, true, 0, 0);
+                food[i].foodname = file.ReadLine();
+                bool needquant = bool.Parse(file.ReadLine());
+                food[i].needfly = bool.Parse(file.ReadLine());
+                food[i].needclimb = bool.Parse(file.ReadLine());
+                food[i].needswim = bool.Parse(file.ReadLine());
+                food[i].meat = bool.Parse(file.ReadLine());
+                food[i].vege = bool.Parse(file.ReadLine());
+                food[i].needspeed = int.Parse(file.ReadLine());
+                food[i].needpower = int.Parse(file.ReadLine());
 
             }
 
@@ -410,7 +412,7 @@ namespace ConsoleApplication8
             {
                 x += 1;
             }
-            Console.WriteLine(x);
+            //Console.WriteLine(x);
             int worldquant = x;
             string[] worldlist = new string[x];
             x = 0;
@@ -424,11 +426,9 @@ namespace ConsoleApplication8
             int foodquant = int.Parse(file.ReadLine());*/
             /*Food[] food = new Food[foodquant];*/
             World[] world = new World[worldquant];
-            for (x = 0; x < worldquant; ++x)
+            for (i = 0; i < worldquant; ++i)
             {
-                System.IO.StreamReader file = new System.IO.StreamReader(@"../../cardinfo/world/" + worldlist[i]);
-                for (x = 0; i < worldquant; x++)
-                {
+                System.IO.StreamReader file = new System.IO.StreamReader(@"../../../../cardinfo/world/" + worldlist[i]);
                     world[i] = new World(0, 0, 0, 0, 0, 0, 0, false, "0", "0");
                     world[i].vegdebuff = int.Parse(file.ReadLine());
                     world[i].threedebuff = int.Parse(file.ReadLine());
@@ -441,7 +441,6 @@ namespace ConsoleApplication8
                     world[i].info = file.ReadLine();
 
 
-                }
 
             }
 
@@ -522,7 +521,6 @@ namespace ConsoleApplication8
             int[] fooddebuff = { 0, 0, 0, 0 };
             int currentworld = 0;
             int[] eatscore = new int[3];
-
             ///Game Start
             do
             {
@@ -594,6 +592,8 @@ namespace ConsoleApplication8
                             if (shop.getLast() == -1) ai[currentPlayer].GoShopping = false;
                             act_choose = ai[currentPlayer].AIchoise(ref player[currentPlayer]);
                         }
+                        if (notAI(currentPlayer)) Console.Clear();
+                        else Console.Read();
                         switch (act_choose)
                         {
                             case 0:
@@ -646,7 +646,7 @@ namespace ConsoleApplication8
                 }
                 /////////////////////
 
-                eat(ref currentfood, food, ref player, ref card, fooddebuff);
+                eat(ref currentfood, food, ref player, ref deck, fooddebuff);
                 for (i = 0; i < 4; i++)
                 {
                     player[i].DNA += player[i].number;
@@ -758,6 +758,8 @@ namespace ConsoleApplication8
                     }
                     player[currentPlayer].unequip(ref shopUsed, dropChoise);
                 }
+                if(notAI(currentPlayer))Console.WriteLine("your equiped {0}", deck[player[currentPlayer].deck[choose]].name);
+                else Console.WriteLine("CPU equiped {0}", deck[player[currentPlayer].deck[choose]].name);
                 deck[player[currentPlayer].deck[choose]].use(ref player[currentPlayer], player[currentPlayer].deck[choose], ai, currentPlayer, ref shopUsed);
             }
 
@@ -798,6 +800,7 @@ namespace ConsoleApplication8
                 if (player[tempplayer[3]].wanttoeat != i)
                 {
                     player[tempplayer[3]].hunger += 3 - i - fooddebuff[i];
+                    Console.WriteLine("player "+tempplayer[3]+"has eaten" +food[currentfood[i]].foodname);
                     if (eatscore[2] == eatscore[3]) player[tempplayer[2]].hunger += 3 - i - fooddebuff[i];
                     if (eatscore[1] == eatscore[2]) player[tempplayer[1]].hunger += 3 - i - fooddebuff[i];
                     if (eatscore[0] == eatscore[1]) player[tempplayer[0]].hunger += 3 - i - fooddebuff[i];

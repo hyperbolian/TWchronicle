@@ -1,0 +1,9 @@
+0
+3
+0
+0
+0
+0
+false
+iceage
++3 food won't be draw out this round

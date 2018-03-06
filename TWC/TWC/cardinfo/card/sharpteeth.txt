@@ -1,0 +1,13 @@
+sharp teeth
+5
+1
+equip
+your avatar deals 1 more damage while attacking other player after using this card
+3
+1
+0
+false
+false
+false
+0
+1

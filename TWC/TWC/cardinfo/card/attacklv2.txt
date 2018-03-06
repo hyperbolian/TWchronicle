@@ -1,0 +1,13 @@
+attack lv2
+3
+3
+equip
+your avatar deals 2 damage to other player for 1 time
+4
+3
+0
+false
+false
+false
+0
+0

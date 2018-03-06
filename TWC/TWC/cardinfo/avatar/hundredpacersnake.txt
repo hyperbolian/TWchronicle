@@ -1,0 +1,12 @@
+Hundred pacer snake
+2
+3
+false
+true
+false
+false
+false
+true
+4
+3
+aggressive

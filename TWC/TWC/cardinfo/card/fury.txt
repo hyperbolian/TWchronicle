@@ -1,0 +1,13 @@
+fury
+6
+1
+equip
+your avatar can eat meat after using this card
+2
+0
+0
+false
+false
+false
+1
+0

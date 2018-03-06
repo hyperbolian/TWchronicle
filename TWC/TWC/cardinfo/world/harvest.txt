@@ -1,0 +1,9 @@
+0
+0
+0
+0
+0
+1
+false
+Harvest
+There are plenty of food this year. Every player gains 1 more satiation while eating food.

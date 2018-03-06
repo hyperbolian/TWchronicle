@@ -1,0 +1,12 @@
+leopard cat
+2
+4
+false
+true
+false
+false
+false
+true
+3
+3
+camouflage ambush
